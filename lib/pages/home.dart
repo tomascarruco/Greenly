@@ -7,6 +7,9 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     var textTheme = TextTheme.of(context);
 
+    final width = MediaQuery.sizeOf(context).width;
+    final images = ['Food', 'Housing', 'Energy', 'Transportation'];
+
     return SingleChildScrollView(
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Column(
@@ -18,12 +21,34 @@ class HomePage extends StatelessWidget {
           SizedBox(
             height: 200,
             child: CarouselView(
-              backgroundColor: Colors.grey.shade400,
+              backgroundColor: Colors.white,
               itemExtent: MediaQuery.of(context).size.width * 0.8,
+              itemSnapping: true,
               children: List<Widget>.generate(4, (int id) {
-                return Image.asset(
-                  'assets/images/600x400.png',
-                  fit: BoxFit.cover,
+                return Stack(
+                  alignment: AlignmentDirectional.bottomStart,
+                  // fit: StackFit.passthrough,
+                  children: <Widget>[
+                    ClipRect(
+                      child: OverflowBox(
+                        maxWidth: width / 2.5,
+                        maxHeight: width / 2.5,
+                        child: Image.asset(
+                          'assets/images/${images[id]}.png',
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsetsGeometry.all(18.0),
+                      child: Text(
+                        images[id],
+                        overflow: TextOverflow.clip,
+                        softWrap: false,
+                        style: textTheme.titleMedium,
+                      ),
+                    ),
+                  ],
                 );
               }),
             ),
