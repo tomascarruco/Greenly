@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:greenly/pages/home.dart';
 
 void main() {
   const appTitle = 'greenly';
@@ -21,57 +22,62 @@ class MainApp extends StatelessWidget {
           brightness: Brightness.light,
           surface: Color.fromRGBO(246, 250, 245, 100),
         ),
+        textTheme: TextTheme(
+          headlineSmall: const TextStyle(
+            color: Colors.green,
+            fontWeight: FontWeight.w700,
+            fontSize: 26,
+          ),
+          titleLarge: const TextStyle(
+            fontWeight: FontWeight.w500,
+            fontSize: 20,
+          ),
+          bodyMedium: const TextStyle(fontSize: 16),
+          bodySmall: const TextStyle(fontSize: 14),
+        ),
       ),
-      home: const HomePage(),
+      home: const MainLayout(),
     );
   }
 }
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+class MainLayout extends StatelessWidget {
+  const MainLayout({super.key});
 
   @override
   Widget build(BuildContext context) {
+    var themeColorScheme = Theme.of(context).colorScheme;
+
     var floatingActionButton = FloatingActionButton(
       onPressed: () {},
       tooltip: 'Available Actions',
-      backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+      backgroundColor: themeColorScheme.secondaryContainer,
       elevation: 0,
       child: Icon(Icons.add),
-    );
-
-    var pageBody = Center(
-      child: Builder(
-        builder: (context) {
-          return Column(
-            children: [const SizedBox(height: 20), Text('Hello World!')],
-          );
-        },
-      ),
     );
 
     // var appBar = AppBar(title: const Text('My Home Page'));
 
     return Scaffold(
       // --- APP Top Bar and Navigation
-      appBar: const AppBarTop(),
+      appBar: const AppTopBar(),
       // --- APP Bottom Bar and action button
-      bottomNavigationBar: AppBottomAppBar(),
+      bottomNavigationBar: AppBarBottom(),
       floatingActionButton: floatingActionButton,
       floatingActionButtonLocation: FloatingActionButtonLocation.endContained,
       // --- Material APP Body
-      body: pageBody,
+      body: HomePage(),
     );
   }
 }
 
-class AppBarTop extends StatelessWidget implements PreferredSizeWidget {
-  const AppBarTop({super.key});
+class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
+  const AppTopBar({super.key});
 
   @override
   Widget build(BuildContext context) {
     var textTheme = TextTheme.of(context);
-    var title = Text('Greenly', style: textTheme.headlineLarge);
+    var title = Text('Greenly', style: textTheme.headlineSmall);
 
     return AppBar(
       title: title,
@@ -100,8 +106,8 @@ class AppBarTop extends StatelessWidget implements PreferredSizeWidget {
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }
 
-class AppBottomAppBar extends StatelessWidget {
-  const AppBottomAppBar({super.key});
+class AppBarBottom extends StatelessWidget {
+  const AppBarBottom({super.key});
 
   @override
   Widget build(BuildContext context) {
