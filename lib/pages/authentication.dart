@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+/// authentication.dart - Provides UI/UX for user authentication
+
 class AuthenticationPage extends StatefulWidget {
   const AuthenticationPage({super.key});
 

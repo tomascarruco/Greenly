@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+
+// import 'package:greenly/pages/home.dart';
+import 'package:greenly/pages/authentication.dart';
 import 'package:greenly/pages/home.dart';
 
 void main() {
@@ -55,8 +58,6 @@ class MainLayout extends StatelessWidget {
       elevation: 0,
       child: Icon(Icons.add),
     );
-
-    // var appBar = AppBar(title: const Text('My Home Page'));
 
     return Scaffold(
       // --- APP Top Bar and Navigation
