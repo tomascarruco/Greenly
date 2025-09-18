@@ -1,5 +1,6 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -28,15 +29,16 @@ Future<void> main() async {
     );
 
     // Gracefully shutdown
-    SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+    // SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+    exit(0);
   }
 
-  await Supabase.initialize(url: supaUrl!, anonKey: supaAnonKey!);
+  await Supabase.initialize(url: supaUrl, anonKey: supaAnonKey, debug: true);
 
   runApp(const MainApp(appTitle));
 }
 
-final supabase = Supabase.instance.client;
+final SupabaseClient supabase = Supabase.instance.client;
 
 class MainApp extends StatelessWidget {
   final String appTitle;
@@ -67,98 +69,9 @@ class MainApp extends StatelessWidget {
           bodySmall: const TextStyle(fontSize: 14),
         ),
       ),
-      home: const MainLayout(),
-    );
-  }
-}
-
-class MainLayout extends StatelessWidget {
-  const MainLayout({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    var themeColorScheme = Theme.of(context).colorScheme;
-
-    var floatingActionButton = FloatingActionButton(
-      onPressed: () {},
-      tooltip: 'Available Actions',
-      backgroundColor: themeColorScheme.secondaryContainer,
-      elevation: 0,
-      child: Icon(Icons.add),
-    );
-
-    return Scaffold(
-      // --- APP Top Bar and Navigation
-      appBar: const AppTopBar(),
-      // --- APP Bottom Bar and action button
-      bottomNavigationBar: AppBarBottom(),
-      floatingActionButton: floatingActionButton,
-      floatingActionButtonLocation: FloatingActionButtonLocation.endContained,
-      // --- Material APP Body
-      body: supabase.auth.currentSession == null
+      home: supabase.auth.currentSession != null
           ? const HomePage()
           : const AuthenticationPage(),
-    );
-  }
-}
-
-class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
-  const AppTopBar({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    var textTheme = TextTheme.of(context);
-    var title = Text('Greenly', style: textTheme.headlineSmall);
-
-    return AppBar(
-      title: title,
-      backgroundColor: Colors.white,
-      animateColor: false,
-      centerTitle: true,
-      elevation: 0,
-
-      leading: IconButton(
-        onPressed: () {},
-        icon: Icon(Icons.menu),
-        iconSize: 32,
-      ),
-      actions: <Widget>[
-        CircleAvatar(
-          backgroundColor: Colors.lightGreen.shade100,
-          child: const Text('A'),
-        ),
-      ],
-      actionsPadding: const EdgeInsetsGeometry.all(10),
-      actionsIconTheme: IconThemeData(
-        color: Theme.of(context).colorScheme.onSurface,
-      ),
-    );
-  }
-
-  @override
-  // TODO: implement preferredSize
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
-}
-
-class AppBarBottom extends StatelessWidget {
-  const AppBarBottom({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return BottomAppBar(
-      child: IconTheme(
-        data: IconThemeData(color: Theme.of(context).colorScheme.onSurface),
-        child: Row(
-          children: <Widget>[
-            IconButton(
-              tooltip: 'Open Search Menu',
-              icon: const Icon(Icons.search),
-              iconSize: 32,
-              onPressed: () {},
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
