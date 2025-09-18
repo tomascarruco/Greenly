@@ -45,5 +45,5 @@ app.*.map.json
 /android/app/release
 
 # Supabase and Environment variables
-.env
+*.env
 supabase/
