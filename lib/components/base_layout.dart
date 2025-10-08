@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:greenly/components/app_bottom_bar.dart';
 import 'package:greenly/components/app_top_bar.dart';
+import 'package:greenly/pages/settings.dart';
 
 class BasePageLayout extends StatelessWidget {
   final Widget body;
@@ -66,7 +67,19 @@ class BasePageLayout extends StatelessWidget {
                 ),
               ),
             ),
-            ListTile(title: const Text('Settings'), onTap: () {}),
+            ListTile(
+              title: Row(
+                spacing: 10,
+                children: [const Icon(Icons.settings), const Text('Settings')],
+              ),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (BuildContext context) => const SettingsPage(),
+                  ),
+                );
+              },
+            ),
             ListTile(title: const Text('Item 2'), onTap: () {}),
           ],
         ),

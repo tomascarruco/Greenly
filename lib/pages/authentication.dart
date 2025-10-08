@@ -1,13 +1,13 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:greenly/main.dart';
 import 'package:greenly/pages/home.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 
 /// authentication.dart - Provides UI/UX for user authentication
-
+///
 class AuthenticationPage extends StatefulWidget {
   const AuthenticationPage({super.key});
 
@@ -64,48 +64,128 @@ class _NewAccountCard extends StatefulWidget {
 class _NewAccountCardState extends State<_NewAccountCard> {
   final _formKey = GlobalKey<FormState>();
 
+  final _email = TextEditingController();
+  final _passwordChoice = TextEditingController();
+  final _repeatPassword = TextEditingController();
+
+  late final StreamSubscription<AuthState> _authStateSubscription;
+
+  bool _isLoading = false;
+  bool _redirecting = false;
+  bool _otpEmitted = false;
+
+  Future _createAccount() async {
+    try {
+      setState(() {
+        _isLoading = true;
+      });
+
+      await supabase.auth.signUp(
+        email: _email.text,
+        password: _passwordChoice.text,
+      );
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Check your email for an OTP Code!')),
+        );
+      }
+    } on AuthException catch (err) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(err.message)));
+      }
+    } catch (err) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error : ${err.toString()}')));
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _otpEmitted = true;
+        });
+      }
+    }
+    // throw UnimplementedError();
+  }
+
+  Future _validateAccount(String otpCode) async {
+    try {
+      await supabase.auth.verifyOTP(
+        type: OtpType.signup,
+        email: _email.text,
+        token: otpCode.trim(),
+      );
+    } on AuthException catch (err) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Try again later...')));
+
+      debugPrint('Got an error authenticating: $err');
+    } catch (err) {
+      throw UnimplementedError('Unexpected authentication error, not handled');
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _otpEmitted = true;
+        });
+      }
+    }
+  }
+
+  @override
+  void initState() {
+    // supabase.auth.currentSession!.user.email;
+    _authStateSubscription = supabase.auth.onAuthStateChange.listen((data) {
+      if (_redirecting) return;
+
+      final session = data.session;
+      if (session != null) {
+        _redirecting = true;
+        if (mounted) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const HomePage()),
+          );
+        }
+      }
+    });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _email.dispose();
+    _authStateSubscription.cancel();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     var textTheme = TextTheme.of(context);
 
-    final nameFirstAndLast = TextEditingController();
-    final username = TextEditingController();
-    final passwordChoice = TextEditingController();
-    final repeatPassword = TextEditingController();
-
-    @override
-    void dispose() {
-      nameFirstAndLast.dispose();
-      super.dispose();
-    }
-
     const formTitle = 'Lets get started!';
     const innerCardEdgeInsets = EdgeInsets.all(20);
 
-    var userFullNameInpDecoration = InputDecoration(
-      // border: (borderRadius: BorderRadius.circular(8)),
+    var emailInpDecoration = InputDecoration(
       contentPadding: EdgeInsetsGeometry.all(8),
-      label: Text('First and last name'),
-      hintText: 'John Doe',
-      prefixIcon: Icon(Icons.person),
+      label: Text('Enter an email'),
+      hintText: 'user@email.com',
+      prefixIcon: Icon(Icons.email_rounded),
       filled: true,
       fillColor: Colors.white,
-      errorText: 'Please enter your first and last name.',
-    );
-
-    var userNameInpDecoration = InputDecoration(
-      // border: (borderRadius: BorderRadius.circular(8)),
-      contentPadding: EdgeInsetsGeometry.all(8),
-      label: Text('User name'),
-      hintText: 'greenlyUser213',
-      prefixIcon: Icon(Icons.alternate_email_rounded),
-      filled: true,
-      fillColor: Colors.white,
-      errorText: 'Please enter a user name.',
     );
 
     var passwordFormInputDecoration = InputDecoration(
-      // border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
       contentPadding: EdgeInsetsGeometry.all(8),
       label: Text('Password'),
       hintText: '**********',
@@ -116,7 +196,6 @@ class _NewAccountCardState extends State<_NewAccountCard> {
     );
 
     var passwordRepeatFormInputDecoration = InputDecoration(
-      // border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
       contentPadding: EdgeInsetsGeometry.all(8),
       label: Text('Repeat the Password'),
       hintText: '**********',
@@ -124,7 +203,6 @@ class _NewAccountCardState extends State<_NewAccountCard> {
       suffixIcon: Icon(Icons.visibility_off),
       filled: true,
       fillColor: Colors.white,
-      errorText: 'Please repeat the same password',
     );
 
     SizedBox spacer({double? h}) => (SizedBox(height: h ?? 20.0));
@@ -142,24 +220,10 @@ class _NewAccountCardState extends State<_NewAccountCard> {
             children: <Widget>[
               Text(formTitle, style: textTheme.titleLarge),
               spacer(),
-              // User's name first and last
+              // User's Email
               TextFormField(
-                controller: nameFirstAndLast,
-                decoration: userFullNameInpDecoration,
-                keyboardType: TextInputType.emailAddress,
-                enableSuggestions: true,
-                spellCheckConfiguration: SpellCheckConfiguration.disabled(),
-                validator: (email) {
-                  if (email == null || email.isEmpty) {
-                    return 'Please enter an email';
-                  }
-                  return null;
-                },
-              ),
-              // User's user name
-              TextFormField(
-                controller: username,
-                decoration: userNameInpDecoration,
+                controller: _email,
+                decoration: emailInpDecoration,
                 keyboardType: TextInputType.emailAddress,
                 enableSuggestions: true,
                 spellCheckConfiguration: SpellCheckConfiguration.disabled(),
@@ -171,10 +235,9 @@ class _NewAccountCardState extends State<_NewAccountCard> {
                 },
               ),
               spacer(h: 6),
-              spacer(h: 6),
-              // Password fields
+              // Password choice
               TextFormField(
-                controller: passwordChoice,
+                controller: _passwordChoice,
                 keyboardType: TextInputType.visiblePassword,
                 decoration: passwordFormInputDecoration,
                 enableSuggestions: false,
@@ -186,33 +249,78 @@ class _NewAccountCardState extends State<_NewAccountCard> {
                   return null;
                 },
               ),
+              // Password repeat choice
               TextFormField(
-                controller: repeatPassword,
+                controller: _repeatPassword,
                 keyboardType: TextInputType.visiblePassword,
                 decoration: passwordRepeatFormInputDecoration,
                 enableSuggestions: false,
                 spellCheckConfiguration: SpellCheckConfiguration.disabled(),
                 validator: (password) {
                   if (password == null || password.isEmpty) {
-                    return 'Please enter the password';
+                    return 'Please enter a password';
                   }
+
+                  if (password != _passwordChoice.text) {
+                    return 'Please enter the same password';
+                  }
+
                   return null;
                 },
               ),
               spacer(),
               FilledButton(
                 onPressed: () {
-                  if (!_formKey.currentState!.validate()) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(nameFirstAndLast.text)),
-                    );
+                  if (_formKey.currentState!.validate()) {
+                    // ScaffoldMessenger.of(
+                    //   context,
+                    // ).showSnackBar(SnackBar(content: Text(_email.text)));
+                    _isLoading ? null : _createAccount();
+                    return;
                   }
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Should not get here!')),
+                  );
                 },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   spacing: 5,
-                  children: [Icon(Icons.add), const Text('Create Account')],
+                  children: [
+                    Text(
+                      _isLoading ? 'Creatting Account...' : 'Create Account',
+                    ),
+                  ],
                 ),
+              ),
+              Builder(
+                builder: (context) {
+                  if (!_otpEmitted) {
+                    return SizedBox();
+                  }
+                  return Column(
+                    children: [
+                      spacer(),
+                      spacer(),
+                      Text('Enter your OTP code', style: textTheme.titleMedium),
+                      spacer(),
+                      OtpTextField(
+                        numberOfFields: 6,
+                        fieldWidth: 60,
+                        borderColor: Color(0xFF512DA8),
+                        showFieldAsBox: true,
+                        onCodeChanged: (String code) {},
+                        onSubmit: (String otpCode) {
+                          _validateAccount(otpCode);
+                        },
+                      ),
+                      spacer(),
+                      // FilledButton(
+                      //   onPressed: () {},
+                      //   child: const Text('VerifyAccount'),
+                      // ),
+                    ],
+                  );
+                },
               ),
             ],
           ),
@@ -223,7 +331,7 @@ class _NewAccountCardState extends State<_NewAccountCard> {
 }
 
 class _LoginCard extends StatefulWidget {
-  const _LoginCard({super.key});
+  const _LoginCard();
 
   @override
   State<StatefulWidget> createState() => _LoginCardState();
@@ -233,23 +341,25 @@ class _LoginCardState extends State<_LoginCard> {
   final _formKey = GlobalKey<FormState>();
 
   late final _emailController = TextEditingController();
+  late final _passwordController = TextEditingController();
+
   late final StreamSubscription<AuthState> _authStateSubscription;
 
   bool _isLoading = false;
   bool _redirecting = false;
 
   Future<void> _signIn() async {
-    // TODO: Implement sign in
     try {
       setState(() {
         _isLoading = true;
       });
 
-      await supabase.auth.signInWithOtp(
+      await supabase.auth.signInWithPassword(
         email: _emailController.text.trim(),
-        emailRedirectTo: kIsWeb
-            ? null
-            : 'mcjrbcjffkecfijvfmxa.supabase.co://login-callback/',
+        password: _passwordController.text.trim(),
+        // emailRedirectTo: kIsWeb
+        //     ? null
+        //     : 'mcjrbcjffkecfijvfmxa.supabase.co://login-callback/',
       );
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -284,7 +394,7 @@ class _LoginCardState extends State<_LoginCard> {
 
   @override
   void initState() {
-    // TODO: Implement init state
+    // supabase.auth.currentSession!.user.email;
     _authStateSubscription = supabase.auth.onAuthStateChange.listen((data) {
       if (_redirecting) return;
 
@@ -332,7 +442,7 @@ class _LoginCardState extends State<_LoginCard> {
       label: Text('Password'),
       hintText: '**********',
       prefixIcon: Icon(Icons.password_rounded),
-      suffixIcon: Icon(Icons.visibility_off),
+      suffixIcon: Icon(Icons.visibility_rounded),
       filled: true,
       fillColor: Colors.white,
     );
@@ -367,6 +477,7 @@ class _LoginCardState extends State<_LoginCard> {
               ),
               spacer(),
               TextFormField(
+                controller: _passwordController,
                 keyboardType: TextInputType.visiblePassword,
                 decoration: passwordFormInputDecoration,
                 enableSuggestions: false,
@@ -388,12 +499,12 @@ class _LoginCardState extends State<_LoginCard> {
               spacer(h: 10),
               FilledButton(
                 onPressed: () {
-                  // if (_formKey.currentState!.validate()) {
-                  //   ScaffoldMessenger.of(context).showSnackBar(
-                  //     const SnackBar(content: Text('Processing Data')),
-                  //   );
-                  _isLoading ? null : _signIn();
-                  // }
+                  if (_formKey.currentState!.validate()) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Processing Data')),
+                    );
+                    _isLoading ? null : _signIn();
+                  }
                 },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,

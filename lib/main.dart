@@ -59,14 +59,23 @@ class MainApp extends StatelessWidget {
           headlineSmall: const TextStyle(
             color: Colors.green,
             fontWeight: FontWeight.w700,
-            fontSize: 26,
+            fontSize: 28,
           ),
           titleLarge: const TextStyle(
             fontWeight: FontWeight.w700,
             fontSize: 22,
           ),
-          bodyMedium: const TextStyle(fontSize: 16),
-          bodySmall: const TextStyle(fontSize: 14),
+          titleMedium: const TextStyle(
+            fontWeight: FontWeight.w700,
+            fontSize: 18,
+          ),
+          titleSmall: const TextStyle(
+            fontWeight: FontWeight.w700,
+            fontSize: 14,
+          ),
+          bodyLarge: const TextStyle(fontSize: 15),
+          bodyMedium: const TextStyle(fontSize: 14),
+          bodySmall: const TextStyle(fontSize: 12),
         ),
       ),
       home: supabase.auth.currentSession != null

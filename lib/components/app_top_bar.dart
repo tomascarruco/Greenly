@@ -11,7 +11,7 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       title: title,
       backgroundColor: Colors.white,
-      animateColor: false,
+      animateColor: true,
       centerTitle: true,
       elevation: 0,
 
