@@ -26,28 +26,31 @@ class _AuthenticationPageState extends State<AuthenticationPage>
 
     // padding: scrollViewEdgeInsets,
     return Scaffold(
-      body: DefaultTabController(
-        length: 2,
-        child: Column(
-          children: [
-            TabBar(
-              tabs: <Widget>[
-                Tab(icon: Icon(Icons.login)),
-                Tab(icon: Icon(Icons.account_circle_outlined)),
-              ],
-            ),
-            Expanded(
-              child: Padding(
-                padding: scrollViewEdgeInsets,
-                child: TabBarView(
-                  children: [
-                    SingleChildScrollView(child: _LoginCard()),
-                    SingleChildScrollView(child: _NewAccountCard()),
-                  ],
+      body: Padding(
+        padding: EdgeInsetsGeometry.directional(top: 50),
+        child: DefaultTabController(
+          length: 2,
+          child: Column(
+            children: [
+              TabBar(
+                tabs: <Widget>[
+                  Tab(icon: Icon(Icons.login)),
+                  Tab(icon: Icon(Icons.account_circle_outlined)),
+                ],
+              ),
+              Expanded(
+                child: Padding(
+                  padding: scrollViewEdgeInsets,
+                  child: TabBarView(
+                    children: [
+                      SingleChildScrollView(child: _LoginCard()),
+                      SingleChildScrollView(child: _NewAccountCard()),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -164,8 +167,12 @@ class _NewAccountCardState extends State<_NewAccountCard> {
 
   @override
   void dispose() {
-    _email.dispose();
     _authStateSubscription.cancel();
+
+    _email.dispose();
+    _passwordChoice.dispose();
+    _repeatPassword.dispose();
+
     super.dispose();
   }
 
@@ -357,15 +364,12 @@ class _LoginCardState extends State<_LoginCard> {
       await supabase.auth.signInWithPassword(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
-        // emailRedirectTo: kIsWeb
-        //     ? null
-        //     : 'mcjrbcjffkecfijvfmxa.supabase.co://login-callback/',
       );
+
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Check your email for a login link!')),
-        );
-        _emailController.clear();
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Welcome back!!!')));
       }
     } on AuthException catch (err) {
       if (mounted) {
@@ -414,6 +418,7 @@ class _LoginCardState extends State<_LoginCard> {
   @override
   void dispose() {
     _emailController.dispose();
+    _passwordController.dispose();
     _authStateSubscription.cancel();
     super.dispose();
   }
