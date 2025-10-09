@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:greenly/components/app_bottom_bar.dart';
 import 'package:greenly/components/app_top_bar.dart';
+import 'package:greenly/main.dart';
+import 'package:greenly/pages/authentication.dart';
 import 'package:greenly/pages/settings.dart';
 
 class BasePageLayout extends StatelessWidget {
@@ -51,7 +53,7 @@ class BasePageLayout extends StatelessWidget {
           padding: EdgeInsets.zero,
           children: [
             SizedBox(
-              height: 150,
+              height: 130,
               child: DrawerHeader(
                 decoration: BoxDecoration(
                   color: themeColorScheme.secondaryContainer,
@@ -59,10 +61,10 @@ class BasePageLayout extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.center,
-                  spacing: 10,
+                  spacing: 5,
                   children: [
                     Icon(Icons.list),
-                    Text('Navigation Menu', style: textTheme.titleLarge),
+                    Text('Menu', style: textTheme.titleLarge),
                   ],
                 ),
               ),
@@ -80,7 +82,34 @@ class BasePageLayout extends StatelessWidget {
                 );
               },
             ),
-            ListTile(title: const Text('Item 2'), onTap: () {}),
+            ListTile(
+              title: Row(
+                spacing: 10,
+                children: [
+                  const Icon(Icons.logout_rounded),
+                  const Text('Log-out'),
+                ],
+              ),
+              onTap: () async {
+                try {
+                  await supabase.auth.signOut();
+                } catch (err) {
+                  debugPrint('Failed to logout the user');
+                } finally {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(SnackBar(content: Text('See you soon!')));
+
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(
+                        builder: (context) => const AuthenticationPage(),
+                      ),
+                    );
+                  }
+                }
+              },
+            ),
           ],
         ),
       ),
