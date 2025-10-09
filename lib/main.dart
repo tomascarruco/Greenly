@@ -21,8 +21,8 @@ Future<void> main() async {
   final supaAnonKey = dotenv.maybeGet('SUPABASE_PUBLISHABLE_KEY');
 
   if (supaAnonKey == null || supaUrl == null) {
-    final supaUrlFound = supaUrl != null ? 'foound' : 'notFound';
-    final supaAnonKeyFound = supaAnonKey != null ? 'foound' : 'notFound';
+    final supaUrlFound = supaUrl != null ? 'found' : 'notFound';
+    final supaAnonKeyFound = supaAnonKey != null ? 'found' : 'notFound';
 
     print(
       'envLoading: Could not load env vals: supaAnonKey($supaAnonKeyFound) | supaUrlFound($supaUrlFound)',
@@ -67,15 +67,15 @@ class MainApp extends StatelessWidget {
           ),
           titleMedium: const TextStyle(
             fontWeight: FontWeight.w700,
-            fontSize: 18,
+            fontSize: 20,
           ),
           titleSmall: const TextStyle(
             fontWeight: FontWeight.w700,
-            fontSize: 14,
+            fontSize: 18,
           ),
-          bodyLarge: const TextStyle(fontSize: 15),
-          bodyMedium: const TextStyle(fontSize: 14),
-          bodySmall: const TextStyle(fontSize: 12),
+          bodyLarge: const TextStyle(fontSize: 18),
+          bodyMedium: const TextStyle(fontSize: 16),
+          bodySmall: const TextStyle(fontSize: 14),
         ),
       ),
       home: supabase.auth.currentSession != null
