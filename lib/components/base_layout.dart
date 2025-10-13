@@ -75,6 +75,8 @@ class BasePageLayout extends StatelessWidget {
                 children: [const Icon(Icons.settings), const Text('Settings')],
               ),
               onTap: () {
+                // Navigator.of(context).pop();
+
                 Navigator.of(context).push(
                   MaterialPageRoute<void>(
                     builder: (BuildContext context) => const SettingsPage(),

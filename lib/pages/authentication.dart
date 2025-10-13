@@ -321,10 +321,6 @@ class _NewAccountCardState extends State<_NewAccountCard> {
                         },
                       ),
                       spacer(),
-                      // FilledButton(
-                      //   onPressed: () {},
-                      //   child: const Text('VerifyAccount'),
-                      // ),
                     ],
                   );
                 },

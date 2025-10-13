@@ -1,13 +1,15 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:greenly/assumptions.dart';
 
-// import 'package:greenly/pages/home.dart';
 import 'package:greenly/pages/authentication.dart';
 import 'package:greenly/pages/home.dart';
+import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 Future<void> main() async {
@@ -29,13 +31,18 @@ Future<void> main() async {
     );
 
     // Gracefully shutdown
-    // SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+    SystemChannels.platform.invokeMethod('SystemNavigator.pop');
     exit(0);
   }
 
   await Supabase.initialize(url: supaUrl, anonKey: supaAnonKey, debug: true);
 
-  runApp(const MainApp(appTitle));
+  runApp(
+    MultiProvider(
+      providers: [ChangeNotifierProvider(create: (ctx) => AssumptionsModel())],
+      child: const MainApp(appTitle),
+    ),
+  );
 }
 
 final SupabaseClient supabase = Supabase.instance.client;

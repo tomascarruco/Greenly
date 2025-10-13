@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:greenly/assumptions.dart';
 import 'package:greenly/components/base_layout.dart';
-import 'package:greenly/main.dart';
+import 'package:greenly/pages/collection/new_assumption.dart';
 import 'package:provider/provider.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -36,7 +37,7 @@ class SettingsPage extends StatelessWidget {
                 child: TabBarView(
                   children: [
                     _buildBaseSettingsSection(textTheme),
-                    _buildBaseAssumptionsSection(textTheme),
+                    _buildBaseAssumptionsSection(context, textTheme),
                     SingleChildScrollView(child: const Text('AAA')),
                   ],
                 ),
@@ -49,10 +50,14 @@ class SettingsPage extends StatelessWidget {
     );
   }
 
-  SingleChildScrollView _buildBaseAssumptionsSection(TextTheme textTheme) {
+  SingleChildScrollView _buildBaseAssumptionsSection(
+    BuildContext context,
+    TextTheme textTheme,
+  ) {
     return SingleChildScrollView(
       padding: EdgeInsets.symmetric(horizontal: 10),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
         spacing: 6,
         children: [
           Column(
@@ -70,13 +75,26 @@ class SettingsPage extends StatelessWidget {
           _spacer(),
           Divider(height: 2, color: Colors.grey.shade300),
           _spacer(),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisAlignment: MainAxisAlignment.start,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             spacing: 4,
             children: [
               Text('Commute', style: textTheme.titleSmall),
-              _spacer(h: 4),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const NewAssumption(),
+                    ),
+                  );
+                },
+                style: TextButton.styleFrom(
+                  backgroundColor: Colors.grey.shade200,
+                  padding: EdgeInsets.symmetric(horizontal: 12),
+                  foregroundColor: Colors.blueGrey,
+                ),
+                child: Text('New Assumption'),
+              ),
             ],
           ),
           _spacer(),
@@ -90,38 +108,34 @@ class SettingsPage extends StatelessWidget {
                   var children = assumptions
                       .getAssumptionsPerType<TransportationAssumption>();
 
-                  var a = List<Widget>.generate(children.length, (int index) {
-                    return Container(
-                      width: 500,
-                      height: 50,
-                      color: Colors.amber.shade500,
-
-                      child: Text(children[index].label()),
-                    );
-                  });
+                  var transportAssumptions = List<Widget>.generate(
+                    children.length,
+                    (int index) {
+                      return Row(children: [Text(children[index].label())]);
+                    },
+                  );
 
                   return Column(
                     mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      FilledButton(
-                        onPressed: () {
-                          Provider.of<AssumptionsModel>(
-                            context,
-                            listen: false,
-                          ).add(
-                            TransportationAssumption<int>(
-                              assumpLabel: 'Super',
-                              assumpValue: 12,
-                            ),
-                          );
-                        },
-                        child: const Text('Add new Assumption'),
-                      ),
-                      Column(children: a),
+                      children.isEmpty
+                          ? Column(
+                              children: [
+                                Text(
+                                  'No assumptions here!',
+                                  style: TextStyle(color: Colors.grey.shade500),
+                                ),
+                              ],
+                            )
+                          : SizedBox(),
+                      Column(children: transportAssumptions),
                     ],
                   );
                 },
           ),
+          _spacer(),
+          Divider(height: 2, color: Colors.grey.shade300),
         ],
       ),
     );
