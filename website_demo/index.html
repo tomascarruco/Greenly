@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta content="IE=Edge" http-equiv="X-UA-Compatible" />
+    <meta name="description" content="Greenly Download Site." />
+
+    <title>website_demo</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+
+    <link href="src/style.css" rel="stylesheet" />
+    <script src="src/main.js" defer type="module"></script>
+  </head>
+
+  <body class="bg-green-50 flex flex-col m-0 overflow-scroll min-h-[100vh]">
+    <header
+      class="bg-white w-full p-6 sm:p-4 flex flex-row items-center gap-6 overflow-clip sticky top-0 z-10 border-b-1 border-slate-200"
+    >
+      <h1 class="text-2xl sm:text-3xl font-bold text-green-500">Greenly</h1>
+      <h3 class="text-sm rounded-full px-3 py-0.5 bg-slate-200 text-slate-400">
+        Preview
+      </h3>
+    </header>
+    <main class="p-4 sm:p-4 flex flex-col gap-3 flex-1">
+      <section>
+        <h2 class="text-lg font-medium">Thank you for your patience!</h2>
+        <h2 class="text-slate-500">Here are the app download options</h2>
+      </section>
+      <p />
+      <details
+        name="app-download"
+        class="group bg-white rounded-md border border-slate-200 shadow-xs transition-all duration-300 ease-in-out hover:shadow max-w-[600px]"
+        open
+      >
+        <summary
+          class="px-5 py-4 flex flex-row items-center justify-between gap-4 open:text-green-400 w-full"
+        >
+          <span class="inline-flex space-x-1.5 items-center">
+            <img
+              src="/plus.svg"
+              class="h-5 w-auto fill-white group-open:rotate-45 transition-transform ease-in-out duration-300"
+            />
+            <p class="text-[1.1rem] leading-6 font-medium">Android</p>
+          </span>
+          <p
+            class="text-sm rounded-full px-2.5 py-0.5 bg-slate-50 text-slate-300"
+          >
+            14/09/2025
+          </p>
+        </summary>
+        <p class="my-1 bg-gray-200 h-px" />
+        <div
+          class="px-6 py-3 pb-4 flex flex-row justify-between gap-2 items-center"
+        >
+          <div class="inline-flex gap-4">
+            <span>
+              <b>State:</b>
+              Alpha
+            </span>
+            <span>
+              <b>Size:</b>
+              80MB
+            </span>
+          </div>
+          <button
+            class="font-medium space-x-1 inline-flex items-center bg-green-400 p-2 px-4 rounded-sm text-white hover:scale-105 transition-all ease-in-out duration-300 hover:cursor-pointer"
+          >
+            <img src="/arrow-down-to-line.svg" class="h-5 w-auto fill-white" />
+            <p>Download</p>
+          </button>
+        </div>
+      </details>
+      <p class="p-2" />
+      <section>
+        <h2 class="text-lg font-medium">Changelog</h2>
+        <h2 class="text-slate-500">What has changed and improved.</h2>
+      </section>
+      <p />
+      <section
+        id="changelog"
+        class="border-t-1 border-b-1 p-2 py-4 border-slate-300 overflow-y-auto max-h-[40svh] space-y-2 **:data-wrapper:max-w-[70ch] **:data-wrapper:bg-white **:data-wrapper:p-4 **:data-wrapper:rounded-xl **:data-author:text-md **:data-author:text-slate-500 **:data-author:before:content-['@']"
+      ></section>
+    </main>
+    <footer class="p-6 bg-slate-100 text-slate-400 sticky bottom-0">
+      <p>© 2025 All rights reserved, IPS-ESGTS</p>
+    </footer>
+  </body>
+</html>
