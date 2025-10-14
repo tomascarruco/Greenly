@@ -35,6 +35,8 @@ jobs:
         with:
           node-version: lts/*
           cache: 'npm'
+      - name: Move to docs folder for build
+        run: cd docs/
       - name: Install dependencies
         run: npm ci
       - name: Build
