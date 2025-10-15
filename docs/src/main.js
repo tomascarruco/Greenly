@@ -10,35 +10,39 @@ class Change {
       <div data-wrapper>
         <h3 data-author>${this.author}</h3>
         <p class="my-1 bg-gray-200 h-px" />
-        <pre>${this.description}</pre>
+        <p>${this.description}</p>
       </div>
    `;
   }
 }
 
-function main() {
+async function main() {
   const changelog = document.getElementById("changelog");
   let listItems = [];
 
-  fetch("https://api.github.com/repos/tomascarruco/greenly/commits?per_page=15")
+  await fetch(
+    "https://api.github.com/repos/tomascarruco/greenly/commits",
+  )
+    .catch((err) => console.error(err))
     .then((res) => res.json())
     .then((commits) => {
+      console.log(commits[0].commit)
       commits.map((c) => listItems.push(c.commit));
     });
 
   if (listItems.length < 1) {
-    
     const node = document.createElement("div");
-    node.innerText= 'Try again, later.' ;
+    node.innerText = "Try again, later.";
 
     changelog.appendChild(node);
     return;
   }
 
   for (let i = 0; i < listItems.length; i += 1) {
-    const commit = listItems[i].commit.committer;
-    const change = new Change(commit.date, commit.message, commit.author.name);
-    console.log(`Commit: ${commit}`);
+    const commit = listItems[i].committer;
+    const commit_message =listItems[i].message;
+
+    const change = new Change(commit.date, commit_message, commit.name);
 
     const node = document.createElement("div");
     node.innerHTML = change.build();
@@ -47,6 +51,6 @@ function main() {
   }
 }
 
-(function () {
-  main();
+(async function () {
+  await main();
 })();
