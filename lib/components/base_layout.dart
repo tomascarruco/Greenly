@@ -5,6 +5,8 @@ import 'package:greenly/main.dart';
 import 'package:greenly/pages/authentication.dart';
 import 'package:greenly/pages/settings.dart';
 
+/// [BasePageLayout] is the app's theme layout, in reusable format,
+/// made into component form, for better reusability.
 class BasePageLayout extends StatelessWidget {
   final Widget body;
 

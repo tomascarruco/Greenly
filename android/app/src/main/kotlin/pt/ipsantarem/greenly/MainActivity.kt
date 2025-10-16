@@ -1,4 +1,4 @@
-package com.example.greenly
+package pt.ipsantarem.greenly
 
 import io.flutter.embedding.android.FlutterActivity
 

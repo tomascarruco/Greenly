@@ -13,7 +13,7 @@ import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 Future<void> main() async {
-  const appTitle = 'greenly';
+  const appTitle = 'Greenly';
 
   usePathUrlStrategy();
 

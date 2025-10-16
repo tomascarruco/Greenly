@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 
 typedef MenuEntry = DropdownMenuEntry<String>;
 
-class _NewAssumptionState extends State<NewAssumption> {
+class _NewHousingAssumptionState extends State<NewHousingAssumption> {
   @override
   Widget build(BuildContext context) {
     var textTheme = TextTheme.of(context);
@@ -32,10 +32,10 @@ class _NewAssumptionState extends State<NewAssumption> {
       ),
     );
 
-    final _assumpCategory = TextEditingController();
-    final _assumpFrequency = TextEditingController();
-    final _assumpCount = TextEditingController();
-    final _assumpValue = TextEditingController();
+    final assumpCategory = TextEditingController();
+    final assumpFrequency = TextEditingController();
+    final assumpCount = TextEditingController();
+    final assumpValue = TextEditingController();
 
     // ---------------------------------
     //     Provider.of<AssumptionsModel>(
@@ -97,7 +97,7 @@ class _NewAssumptionState extends State<NewAssumption> {
             SizedBox(),
             // The What?
             DropdownMenu(
-              controller: _assumpCategory,
+              controller: assumpCategory,
               label: Text('Transport Category'),
               initialSelection: transporationList.first,
               onSelected: (String? value) {},
@@ -111,7 +111,7 @@ class _NewAssumptionState extends State<NewAssumption> {
             ),
             // How much?
             TextField(
-              controller: _assumpValue,
+              controller: assumpValue,
               keyboardType: TextInputType.numberWithOptions(decimal: true),
               inputFormatters: [
                 FilteringTextInputFormatter.allow(
@@ -144,7 +144,7 @@ class _NewAssumptionState extends State<NewAssumption> {
                 Expanded(
                   flex: 2,
                   child: TextField(
-                    controller: _assumpCount,
+                    controller: assumpCount,
                     keyboardType: TextInputType.numberWithOptions(
                       decimal: true,
                     ),
@@ -172,7 +172,7 @@ class _NewAssumptionState extends State<NewAssumption> {
                 Expanded(
                   flex: 3,
                   child: DropdownMenu(
-                    controller: _assumpFrequency,
+                    controller: assumpFrequency,
                     label: Text('Frequency'),
                     initialSelection: frequencyList.first,
                     onSelected: (String? value) {},
@@ -191,15 +191,15 @@ class _NewAssumptionState extends State<NewAssumption> {
               onPressed: () {
                 Provider.of<AssumptionsModel>(context, listen: false).add(
                   TransportationAssumption<double>(
-                    assumpLabel: _assumpCategory.text.trim(),
+                    assumpLabel: assumpCategory.text.trim(),
                     assumpValue: double.parse(
-                      _assumpValue.text.trim().substring(
+                      assumpValue.text.trim().substring(
                         0,
-                        _assumpValue.text.length - 4,
+                        assumpValue.text.length - 4,
                       ),
                     ),
-                    frequency: Frequency.from(_assumpFrequency.text),
-                    assumCount: int.parse(_assumpCount.text.trim()),
+                    frequency: Frequency.from(assumpFrequency.text),
+                    assumCount: int.parse(assumpCount.text.trim()),
                   ),
                 );
                 Navigator.of(context).pop();
@@ -213,9 +213,9 @@ class _NewAssumptionState extends State<NewAssumption> {
   }
 }
 
-class NewAssumption extends StatefulWidget {
-  const NewAssumption({super.key});
+class NewHousingAssumption extends StatefulWidget {
+  const NewHousingAssumption({super.key});
 
   @override
-  State<StatefulWidget> createState() => _NewAssumptionState();
+  State<StatefulWidget> createState() => _NewHousingAssumptionState();
 }
