@@ -51,7 +51,7 @@ class SettingsPage extends StatelessWidget {
                     _baseAssumptionsSection(context, textTheme),
 
                     // --- User profile settings
-                    SingleChildScrollView(child: const Text('AAA')),
+                    SingleChildScrollView(child: const Text('Super Text')),
                   ],
                 ),
               ),
@@ -102,7 +102,7 @@ class SettingsPage extends StatelessWidget {
                 onPressed: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => const NewCommuteAssumption(),
+                      builder: (context) => NewCommuteAssumption(),
                     ),
                   );
                 },
@@ -111,7 +111,7 @@ class SettingsPage extends StatelessWidget {
                   padding: EdgeInsets.symmetric(horizontal: 12),
                   foregroundColor: Colors.blueGrey,
                 ),
-                child: Text('New Assumption'),
+                child: Text('New Entrie'),
               ),
             ],
           ),
@@ -126,7 +126,7 @@ class SettingsPage extends StatelessWidget {
                   Widget? child,
                 ) {
                   var children = assumptions
-                      .getAssumptionsPerType<TransportationAssumption>();
+                      .getAssumptionsPerType<TransportAssumption>();
 
                   var transportAssumptions = List<Widget>.generate(
                     children.length,
@@ -144,8 +144,11 @@ class SettingsPage extends StatelessWidget {
                           ? Column(
                               children: [
                                 Text(
-                                  'No assumptions here!',
-                                  style: TextStyle(color: Colors.grey.shade500),
+                                  'No entries here!',
+                                  style: TextStyle(
+                                    color: Colors.grey.shade500,
+                                    fontStyle: FontStyle.italic,
+                                  ),
                                 ),
                               ],
                             )
@@ -168,7 +171,7 @@ class SettingsPage extends StatelessWidget {
                 onPressed: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => const NewCommuteAssumption(),
+                      builder: (context) => NewCommuteAssumption(),
                     ),
                   );
                 },
@@ -177,7 +180,7 @@ class SettingsPage extends StatelessWidget {
                   padding: EdgeInsets.symmetric(horizontal: 12),
                   foregroundColor: Colors.blueGrey,
                 ),
-                child: Text('New Assumption'),
+                child: Text('New Entrie'),
               ),
             ],
           ),
@@ -210,8 +213,11 @@ class SettingsPage extends StatelessWidget {
                           ? Column(
                               children: [
                                 Text(
-                                  'No assumptions here!',
-                                  style: TextStyle(color: Colors.grey.shade500),
+                                  'No entries here!',
+                                  style: TextStyle(
+                                    color: Colors.grey.shade500,
+                                    fontStyle: FontStyle.italic,
+                                  ),
                                 ),
                               ],
                             )

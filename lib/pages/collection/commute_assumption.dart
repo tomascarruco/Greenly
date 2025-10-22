@@ -3,9 +3,19 @@ import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:greenly/assumptions.dart';
+import 'package:greenly/main.dart';
 import 'package:provider/provider.dart';
 
 typedef MenuEntry = DropdownMenuEntry<String>;
+
+final List<String> transporationList = <String>[
+  'Car',
+  'Electric Car',
+  'SUV',
+  'Bus',
+  'Subway',
+  'Train',
+];
 
 class _NewCommuteAssumptionState extends State<NewCommuteAssumption> {
   @override
@@ -36,21 +46,6 @@ class _NewCommuteAssumptionState extends State<NewCommuteAssumption> {
     final assumpFrequency = TextEditingController();
     final assumpCount = TextEditingController();
     final assumpValue = TextEditingController();
-
-    // ---------------------------------
-    //     Provider.of<AssumptionsModel>(
-    //       context,
-    //       listen: false,
-    //     ).add(
-    //       TransportationAssumption<int>(
-    //         assumpLabel: 'Super',
-    //         assumpValue: 12,
-    //         frequency: Frequency.daily,
-    //       ),
-    //     );
-    //   },
-    //   child: Text('Create New Entry'),
-    // ),
 
     return Scaffold(
       appBar: AppBar(
@@ -119,7 +114,7 @@ class _NewCommuteAssumptionState extends State<NewCommuteAssumption> {
                 ),
                 TextInputFormatter.withFunction(
                   (oldValue, newValue) => newValue.copyWith(
-                    text: newValue.text.replaceAll(',', '.'),
+                    text: newValue.text.replaceAll(',', '').replaceAll('.', ''),
                   ),
                 ),
                 TextInputFormatter.withFunction(
@@ -154,7 +149,9 @@ class _NewCommuteAssumptionState extends State<NewCommuteAssumption> {
                       ),
                       TextInputFormatter.withFunction(
                         (oldValue, newValue) => newValue.copyWith(
-                          text: newValue.text.replaceAll(',', '.'),
+                          text: newValue.text
+                              .replaceAll(',', '')
+                              .replaceAll('.', ''),
                         ),
                       ),
                     ],
@@ -188,9 +185,9 @@ class _NewCommuteAssumptionState extends State<NewCommuteAssumption> {
               ],
             ),
             FilledButton(
-              onPressed: () {
+              onPressed: () async {
                 Provider.of<AssumptionsModel>(context, listen: false).add(
-                  TransportationAssumption<double>(
+                  TransportAssumption<double>(
                     assumpLabel: assumpCategory.text.trim(),
                     assumpValue: double.parse(
                       assumpValue.text.trim().substring(
@@ -203,6 +200,17 @@ class _NewCommuteAssumptionState extends State<NewCommuteAssumption> {
                   ),
                 );
                 Navigator.of(context).pop();
+                // debugPrint('Assum value: $assumpValue');
+
+                // TODO: check for better ways to handle this
+                await supabase.from('transport_assumption').insert({
+                  'transport': assumpCategory.text,
+                  'distance': int.parse(
+                    assumpValue.text.replaceAll(RegExp(r'\D+'), ''),
+                  ),
+                  'count': int.parse(assumpCount.text),
+                  'frequency': assumpFrequency.text.toLowerCase(),
+                });
               },
               child: Text('Add Assumption'),
             ),

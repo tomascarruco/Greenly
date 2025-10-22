@@ -3,6 +3,7 @@ import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:greenly/assumptions.dart';
+import 'package:greenly/pages/collection/commute_assumption.dart';
 import 'package:provider/provider.dart';
 
 typedef MenuEntry = DropdownMenuEntry<String>;
@@ -190,7 +191,7 @@ class _NewHousingAssumptionState extends State<NewHousingAssumption> {
             FilledButton(
               onPressed: () {
                 Provider.of<AssumptionsModel>(context, listen: false).add(
-                  TransportationAssumption<double>(
+                  TransportAssumption<double>(
                     assumpLabel: assumpCategory.text.trim(),
                     assumpValue: double.parse(
                       assumpValue.text.trim().substring(
