@@ -1,15 +1,7 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
-
-const List<String> transporationList = <String>[
-  'Sedan',
-  'Electric Sedan',
-  'SUV',
-  'Bus',
-  'Subway',
-  'Train',
-];
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 enum Frequency {
   daily,
@@ -62,6 +54,8 @@ abstract class Assumption<T> {
   Frequency frequency();
   int count();
   Widget toWidget();
+  Map<String, Object?> toMap();
+  double ghgValue();
 }
 
 class HousingAssumption<T> implements Assumption<T> {
@@ -152,15 +146,32 @@ class HousingAssumption<T> implements Assumption<T> {
       ),
     );
   }
+
+  @override
+  Map<String, Object?> toMap() {
+    // TODO: implement toMap
+    throw UnimplementedError();
+  }
+
+  factory HousingAssumption.fromMap(Map<String, dynamic> data) {
+    // TODO: implement fromMap
+    throw UnimplementedError();
+  }
+
+  @override
+  double ghgValue() {
+    // TODO: implement ghgValue
+    throw UnimplementedError();
+  }
 }
 
-class TransportationAssumption<T> implements Assumption<T> {
+class TransportAssumption<T> implements Assumption<T> {
   final String _assumpLabel;
   final T _assumpValue;
   final Frequency _assumFrequency;
   final int _assumpCount;
 
-  const TransportationAssumption({
+  const TransportAssumption({
     required int assumCount,
     required String assumpLabel,
     required T assumpValue,
@@ -169,6 +180,17 @@ class TransportationAssumption<T> implements Assumption<T> {
        _assumpLabel = assumpLabel,
        _assumFrequency = frequency,
        _assumpCount = assumCount;
+
+  @override
+  Map<String, Object?> toMap() {
+    return {
+      'transport': _assumpValue,
+      'distance': _assumpValue,
+      'count': _assumpCount,
+      'frequency': _assumFrequency,
+      'inserted_at': DateTime.now().toUtc(),
+    };
+  }
 
   @override
   String label() {
@@ -285,10 +307,51 @@ class TransportationAssumption<T> implements Assumption<T> {
       ),
     );
   }
+
+  factory TransportAssumption.fromMap(Map<String, dynamic> data) {
+    return switch (data) {
+      {
+        'transport': String transport,
+        'distance': int distance,
+        'count': int count,
+        'frequency': String frequency,
+        // --- Not Handled fields
+        'inserted_at': _,
+        'updated_at': _,
+        'usr': _,
+        'id': _,
+      } =>
+        TransportAssumption(
+          assumCount: count,
+          assumpLabel: transport,
+          assumpValue: distance as T,
+          frequency: Frequency.from(frequency),
+        ),
+      _ => throw const FormatException(
+        'Failed to parse TransportAssumption from data (DB).',
+      ),
+    };
+  }
+
+  @override
+  double ghgValue() {
+    // TODO: implement ghgValue
+    throw UnimplementedError();
+  }
 }
 
 class AssumptionsModel extends ChangeNotifier {
   final List<Assumption> _assumptions = [];
+
+  bool _isLoading = false;
+  bool _hasInitialized = false;
+
+  AssumptionsModel() {
+    _innitProvider();
+  }
+
+  bool get loading => _isLoading;
+  bool get initialized => _hasInitialized;
 
   /// An unmodifiable view of the items in the cart.
   UnmodifiableListView<Assumption> get items =>
@@ -310,5 +373,37 @@ class AssumptionsModel extends ChangeNotifier {
     _assumptions.clear();
     // Notifies listeners of list changes
     notifyListeners();
+  }
+
+  // --- Logic
+  //
+  Future<void> _innitProvider() async {
+    if (_hasInitialized) return;
+
+    _isLoading = true;
+    notifyListeners();
+
+    await _fetchExistingTransportAssumps();
+
+    _hasInitialized = true;
+    _isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> _fetchExistingTransportAssumps() async {
+    final supabase = Supabase.instance.client;
+
+    final user = supabase.auth.currentUser;
+    if (user == null) {
+      throw const AuthException('The current user is unauthenticated');
+    }
+
+    var assumptions = await supabase.from('transport_assumption').select();
+
+    var transportAssumps = assumptions
+        .map((assum) => TransportAssumption<int>.fromMap(assum))
+        .toList();
+
+    _assumptions.addAll(transportAssumps);
   }
 }

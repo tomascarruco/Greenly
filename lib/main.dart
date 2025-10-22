@@ -8,6 +8,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:greenly/assumptions.dart';
 
 import 'package:greenly/pages/authentication.dart';
+import 'package:greenly/pages/collection/commute_assumption.dart';
 import 'package:greenly/pages/home.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
