@@ -3,7 +3,6 @@ import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:greenly/assumptions.dart';
-import 'package:greenly/main.dart';
 import 'package:provider/provider.dart';
 
 typedef MenuEntry = DropdownMenuEntry<String>;
@@ -201,16 +200,6 @@ class _NewCommuteAssumptionState extends State<NewCommuteAssumption> {
                 );
                 Navigator.of(context).pop();
                 // debugPrint('Assum value: $assumpValue');
-
-                // TODO: check for better ways to handle this
-                await supabase.from('transport_assumption').insert({
-                  'transport': assumpCategory.text,
-                  'distance': int.parse(
-                    assumpValue.text.replaceAll(RegExp(r'\D+'), ''),
-                  ),
-                  'count': int.parse(assumpCount.text),
-                  'frequency': assumpFrequency.text.toLowerCase(),
-                });
               },
               child: Text('Add Assumption'),
             ),

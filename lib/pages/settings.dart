@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:greenly/assumptions.dart';
 import 'package:greenly/components/base_layout.dart';
 import 'package:greenly/pages/collection/commute_assumption.dart';
+import 'package:greenly/pages/collection/food_assumption.dart';
 import 'package:provider/provider.dart';
 
 // Utility component for element spacing.
@@ -165,13 +166,13 @@ class SettingsPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             spacing: 4,
             children: [
-              Text('Housing', style: textTheme.titleSmall),
+              Text('Food', style: textTheme.titleSmall),
               // --- Add new Assumption -> redirects to data collection page.
               TextButton(
                 onPressed: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => NewCommuteAssumption(),
+                      builder: (context) => NewFoodAssumption(),
                     ),
                   );
                 },
@@ -186,7 +187,7 @@ class SettingsPage extends StatelessWidget {
           ),
           _spacer(),
           // --- Use the assumptions notifier to get updates on data change.
-          // --- This consumer is for Housing assumptions only.
+          // --- This consumer is for Food assumptions only.
           Consumer<AssumptionsModel>(
             builder:
                 (
@@ -195,15 +196,14 @@ class SettingsPage extends StatelessWidget {
                   Widget? child,
                 ) {
                   var children = assumptions
-                      .getAssumptionsPerType<HousingAssumption>();
+                      .getAssumptionsPerType<FoodAssumption>();
 
-                  var housingAssumptions = List<Widget>.generate(
-                    children.length,
-                    (int index) {
-                      var child = children[index];
-                      return child.toWidget();
-                    },
-                  );
+                  var foodAssumptions = List<Widget>.generate(children.length, (
+                    int index,
+                  ) {
+                    var child = children[index];
+                    return child.toWidget();
+                  });
 
                   return Column(
                     mainAxisSize: MainAxisSize.max,
@@ -222,7 +222,7 @@ class SettingsPage extends StatelessWidget {
                               ],
                             )
                           : SizedBox(),
-                      Column(children: housingAssumptions),
+                      Column(children: foodAssumptions),
                     ],
                   );
                 },

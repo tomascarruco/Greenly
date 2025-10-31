@@ -58,13 +58,13 @@ abstract class Assumption<T> {
   double ghgValue();
 }
 
-class HousingAssumption<T> implements Assumption<T> {
+class FoodAssumption<T> implements Assumption<T> {
   final String _assumpLabel;
   final T _assumpValue;
   final Frequency _assumFrequency;
   final int _assumpCount;
 
-  const HousingAssumption({
+  const FoodAssumption({
     required int assumCount,
     required String assumpLabel,
     required T assumpValue,
@@ -117,7 +117,7 @@ class HousingAssumption<T> implements Assumption<T> {
             Row(
               spacing: 12,
               children: [
-                Icon(Icons.front_hand),
+                Icon(Icons.flatware_rounded),
                 // Emissions and Date
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -149,13 +149,38 @@ class HousingAssumption<T> implements Assumption<T> {
 
   @override
   Map<String, Object?> toMap() {
-    // TODO: implement toMap
-    throw UnimplementedError();
+    return {
+      'categorie': _assumpLabel,
+      'count': _assumpCount,
+      'frequency': _assumFrequency.name,
+      'proportion_size': _assumpValue,
+      // 'inserted_at': DateTime.now().toUtc(),
+    };
   }
 
-  factory HousingAssumption.fromMap(Map<String, dynamic> data) {
-    // TODO: implement fromMap
-    throw UnimplementedError();
+  factory FoodAssumption.fromMap(Map<String, dynamic> data) {
+    return switch (data) {
+      {
+        'categorie': String categorie,
+        'count': int count,
+        'frequency': String frequency,
+        'proportion_size': T proportionSize,
+        // --- Not Handled fields
+        'inserted_at': _,
+        'updated_at': _,
+        'usr': _,
+        'id': _,
+      } =>
+        FoodAssumption(
+          assumCount: count,
+          assumpLabel: categorie,
+          assumpValue: proportionSize,
+          frequency: Frequency.from(frequency),
+        ),
+      _ => throw const FormatException(
+        'Failed to parse TransportAssumption from data (DB).',
+      ),
+    };
   }
 
   @override
@@ -187,8 +212,8 @@ class TransportAssumption<T> implements Assumption<T> {
       'transport': _assumpValue,
       'distance': _assumpValue,
       'count': _assumpCount,
-      'frequency': _assumFrequency,
-      'inserted_at': DateTime.now().toUtc(),
+      'frequency': _assumFrequency.name,
+      // 'inserted_at': DateTime.now().toUtc(),
     };
   }
 
@@ -259,7 +284,7 @@ class TransportAssumption<T> implements Assumption<T> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Text('$_assumpCount times ${_assumFrequency.name}.'),
+                    Text('$_assumpCount times ${_assumFrequency.name}'),
                     Row(
                       spacing: 6,
                       children: [
@@ -362,10 +387,16 @@ class AssumptionsModel extends ChangeNotifier {
       UnmodifiableListView(_assumptions.whereType<T>());
 
   /// Add [assumption] to assumptions.
-  void add(Assumption assumption) {
+  void add(Assumption assumption) async {
     _assumptions.add(assumption);
     // Notifies listeners of list changes
     notifyListeners();
+    switch (assumption) {
+      case TransportAssumption _:
+        _addTransportAssumptoDB(assumption);
+      case FoodAssumption _:
+        _addFoodAssumptoBD(assumption);
+    }
   }
 
   /// Removes all the [assumption]s from the list.
@@ -376,7 +407,7 @@ class AssumptionsModel extends ChangeNotifier {
   }
 
   // --- Logic
-  //
+
   Future<void> _innitProvider() async {
     if (_hasInitialized) return;
 
@@ -388,6 +419,28 @@ class AssumptionsModel extends ChangeNotifier {
     _hasInitialized = true;
     _isLoading = false;
     notifyListeners();
+  }
+
+  Future<void> _addTransportAssumptoDB<T>(TransportAssumption<T> assump) async {
+    final supabase = Supabase.instance.client;
+
+    final user = supabase.auth.currentUser;
+    if (user == null) {
+      throw const AuthException('The current user is unauthenticated');
+    }
+
+    await supabase.from('transport_assumption').insert(assump.toMap());
+  }
+
+  Future<void> _addFoodAssumptoBD<T>(FoodAssumption<T> assump) async {
+    final supabase = Supabase.instance.client;
+
+    final user = supabase.auth.currentUser;
+    if (user == null) {
+      throw const AuthException('The current user is unauthenticated');
+    }
+
+    await supabase.from('food_assumption').insert(assump.toMap());
   }
 
   Future<void> _fetchExistingTransportAssumps() async {
