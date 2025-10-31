@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 
 import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:greenly/assumptions.dart';
+import 'package:greenly/pages/assumptions.dart';
 
 import 'package:greenly/pages/authentication.dart';
 import 'package:greenly/pages/home.dart';
