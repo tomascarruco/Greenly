@@ -3,7 +3,7 @@ import 'package:greenly/components/app_bottom_bar.dart';
 import 'package:greenly/components/app_top_bar.dart';
 import 'package:greenly/main.dart';
 import 'package:greenly/pages/authentication.dart';
-import 'package:greenly/pages/settings.dart';
+import 'package:greenly/pages/settings/views/settings.dart';
 
 /// [BasePageLayout] is the app's theme layout, in reusable format,
 /// made into component form, for better reusability.
