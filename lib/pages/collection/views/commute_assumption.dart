@@ -2,7 +2,8 @@ import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:greenly/assumptions.dart';
+import 'package:greenly/pages/assumptions.dart';
+import 'package:greenly/pages/collection/models/commute_assumption_model.dart';
 import 'package:provider/provider.dart';
 
 typedef MenuEntry = DropdownMenuEntry<String>;

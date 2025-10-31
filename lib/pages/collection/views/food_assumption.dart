@@ -1,7 +1,8 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
-import 'package:greenly/assumptions.dart';
+import 'package:greenly/pages/assumptions.dart';
+import 'package:greenly/pages/collection/models/food_assumption_model.dart';
 import 'package:provider/provider.dart';
 
 typedef MenuEntry = DropdownMenuEntry<String>;
@@ -50,20 +51,6 @@ class _NewFoodAssumptionState extends State<NewFoodAssumption> {
         (String name) => MenuEntry(value: name, label: name),
       ),
     );
-
-    // List<String> frequencyList = Frequency.values
-    //     .map((Frequency f) => f.name)
-    //     .toList();
-
-    // final frequencyEntries = UnmodifiableListView<MenuEntry>(
-    //   Frequency.values.map(
-    //     (Frequency f) => MenuEntry(
-    //       value: f.name,
-    //       // Capitalize the name of the entry item
-    //       label: f.name[0].toUpperCase() + f.name.substring(1),
-    //     ),
-    //   ),
-    // );
 
     var inputDecorationTheme = InputDecorationTheme(
       border: OutlineInputBorder(),
