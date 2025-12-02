@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:greenly/main.dart';
 import 'package:greenly/pages/home.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -70,6 +71,7 @@ class _NewAccountCardState extends State<_NewAccountCard> {
   final _email = TextEditingController();
   final _passwordChoice = TextEditingController();
   final _repeatPassword = TextEditingController();
+  bool _showPassword = false;
 
   late final StreamSubscription<AuthState> _authStateSubscription;
 
@@ -207,7 +209,14 @@ class _NewAccountCardState extends State<_NewAccountCard> {
       label: Text('Repeat the Password'),
       hintText: '**********',
       prefixIcon: Icon(Icons.password_rounded),
-      suffixIcon: Icon(Icons.visibility_off),
+      suffixIcon: IconButton(
+        onPressed: () {
+          setState(() {
+            _showPassword = !_showPassword;
+          });
+        },
+        icon: Icon(Icons.visibility_off),
+      ),
       filled: true,
       fillColor: Colors.white,
     );
@@ -227,53 +236,67 @@ class _NewAccountCardState extends State<_NewAccountCard> {
             children: <Widget>[
               Text(formTitle, style: textTheme.titleLarge),
               spacer(),
-              // User's Email
-              TextFormField(
-                controller: _email,
-                decoration: emailInpDecoration,
-                keyboardType: TextInputType.emailAddress,
-                enableSuggestions: true,
-                spellCheckConfiguration: SpellCheckConfiguration.disabled(),
-                validator: (email) {
-                  if (email == null || email.isEmpty) {
-                    return 'Please enter an email';
-                  }
-                  return null;
-                },
-              ),
-              spacer(h: 6),
-              // Password choice
-              TextFormField(
-                controller: _passwordChoice,
-                keyboardType: TextInputType.visiblePassword,
-                decoration: passwordFormInputDecoration,
-                enableSuggestions: false,
-                spellCheckConfiguration: SpellCheckConfiguration.disabled(),
-                validator: (password) {
-                  if (password == null || password.isEmpty) {
-                    return 'Please enter the password';
-                  }
-                  return null;
-                },
-              ),
-              // Password repeat choice
-              TextFormField(
-                controller: _repeatPassword,
-                keyboardType: TextInputType.visiblePassword,
-                decoration: passwordRepeatFormInputDecoration,
-                enableSuggestions: false,
-                spellCheckConfiguration: SpellCheckConfiguration.disabled(),
-                validator: (password) {
-                  if (password == null || password.isEmpty) {
-                    return 'Please enter a password';
-                  }
+              AutofillGroup(
+                child: Column(
+                  children: [
+                    // User's Email
+                    TextFormField(
+                      autofillHints: [AutofillHints.email],
+                      controller: _email,
+                      decoration: emailInpDecoration,
+                      keyboardType: TextInputType.emailAddress,
+                      enableSuggestions: true,
+                      spellCheckConfiguration:
+                          SpellCheckConfiguration.disabled(),
+                      validator: (email) {
+                        if (email == null || email.isEmpty) {
+                          return 'Please enter an email';
+                        }
+                        return null;
+                      },
+                    ),
+                    spacer(h: 6),
+                    // Password choice
+                    TextFormField(
+                      autofillHints: [AutofillHints.newPassword],
+                      obscureText: _showPassword,
+                      controller: _passwordChoice,
+                      keyboardType: TextInputType.visiblePassword,
+                      decoration: passwordFormInputDecoration,
+                      enableSuggestions: false,
+                      spellCheckConfiguration:
+                          SpellCheckConfiguration.disabled(),
+                      validator: (password) {
+                        if (password == null || password.isEmpty) {
+                          return 'Please enter the password';
+                        }
+                        return null;
+                      },
+                    ),
+                    // Password repeat choice
+                    TextFormField(
+                      autofillHints: [AutofillHints.newPassword],
+                      obscureText: _showPassword,
+                      controller: _repeatPassword,
+                      keyboardType: TextInputType.visiblePassword,
+                      decoration: passwordRepeatFormInputDecoration,
+                      enableSuggestions: false,
+                      spellCheckConfiguration:
+                          SpellCheckConfiguration.disabled(),
+                      validator: (password) {
+                        if (password == null || password.isEmpty) {
+                          return 'Please enter a password';
+                        }
 
-                  if (password != _passwordChoice.text) {
-                    return 'Please enter the same password';
-                  }
+                        if (password != _passwordChoice.text) {
+                          return 'Please enter the same password';
+                        }
 
-                  return null;
-                },
+                        return null;
+                      },
+                    ),
+                  ],
+                ),
               ),
               spacer(),
               FilledButton(
@@ -282,6 +305,7 @@ class _NewAccountCardState extends State<_NewAccountCard> {
                     // ScaffoldMessenger.of(
                     //   context,
                     // ).showSnackBar(SnackBar(content: Text(_email.text)));
+                    TextInput.finishAutofillContext();
                     _isLoading ? null : _createAccount();
                     return;
                   }
@@ -309,10 +333,11 @@ class _NewAccountCardState extends State<_NewAccountCard> {
                       spacer(),
                       spacer(),
                       Text('Enter your OTP code', style: textTheme.titleMedium),
+                      Text('Check your email!', style: textTheme.bodyMedium),
                       spacer(),
                       OtpTextField(
                         numberOfFields: 6,
-                        fieldWidth: 60,
+                        fieldWidth: 50,
                         borderColor: Color(0xFF512DA8),
                         showFieldAsBox: true,
                         onCodeChanged: (String code) {},
@@ -345,6 +370,7 @@ class _LoginCardState extends State<_LoginCard> {
 
   late final _emailController = TextEditingController();
   late final _passwordController = TextEditingController();
+  var _showPassword = false;
 
   late final StreamSubscription<AuthState> _authStateSubscription;
 
@@ -389,7 +415,6 @@ class _LoginCardState extends State<_LoginCard> {
         });
       }
     }
-    throw UnimplementedError();
   }
 
   @override
@@ -443,7 +468,14 @@ class _LoginCardState extends State<_LoginCard> {
       label: Text('Password'),
       hintText: '**********',
       prefixIcon: Icon(Icons.password_rounded),
-      suffixIcon: Icon(Icons.visibility_rounded),
+      suffixIcon: IconButton(
+        onPressed: () {
+          setState(() {
+            _showPassword = !_showPassword;
+          });
+        },
+        icon: Icon(Icons.visibility_rounded),
+      ),
       filled: true,
       fillColor: Colors.white,
     );
@@ -463,32 +495,43 @@ class _LoginCardState extends State<_LoginCard> {
             children: <Widget>[
               Text(formLoginTitle, style: textTheme.titleLarge),
               spacer(),
-              TextFormField(
-                controller: _emailController,
-                decoration: emailFormInputDecoration,
-                keyboardType: TextInputType.emailAddress,
-                enableSuggestions: true,
-                spellCheckConfiguration: SpellCheckConfiguration.disabled(),
-                validator: (email) {
-                  if (email == null || email.isEmpty) {
-                    return 'Please enter an email';
-                  }
-                  return null;
-                },
-              ),
-              spacer(),
-              TextFormField(
-                controller: _passwordController,
-                keyboardType: TextInputType.visiblePassword,
-                decoration: passwordFormInputDecoration,
-                enableSuggestions: false,
-                spellCheckConfiguration: SpellCheckConfiguration.disabled(),
-                validator: (password) {
-                  if (password == null || password.isEmpty) {
-                    return 'Please enter the password';
-                  }
-                  return null;
-                },
+              AutofillGroup(
+                child: Column(
+                  children: [
+                    TextFormField(
+                      autofillHints: [AutofillHints.email],
+                      controller: _emailController,
+                      decoration: emailFormInputDecoration,
+                      keyboardType: TextInputType.emailAddress,
+                      enableSuggestions: true,
+                      spellCheckConfiguration:
+                          SpellCheckConfiguration.disabled(),
+                      validator: (email) {
+                        if (email == null || email.isEmpty) {
+                          return 'Please enter an email';
+                        }
+                        return null;
+                      },
+                    ),
+                    spacer(),
+                    TextFormField(
+                      autofillHints: [AutofillHints.password],
+                      obscureText: !_showPassword,
+                      controller: _passwordController,
+                      keyboardType: TextInputType.visiblePassword,
+                      decoration: passwordFormInputDecoration,
+                      enableSuggestions: false,
+                      spellCheckConfiguration:
+                          SpellCheckConfiguration.disabled(),
+                      validator: (password) {
+                        if (password == null || password.isEmpty) {
+                          return 'Please enter the password';
+                        }
+                        return null;
+                      },
+                    ),
+                  ],
+                ),
               ),
               TextButton(
                 onPressed: () {},
@@ -504,6 +547,7 @@ class _LoginCardState extends State<_LoginCard> {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Processing Data')),
                     );
+                    TextInput.finishAutofillContext();
                     _isLoading ? null : _signIn();
                   }
                 },
