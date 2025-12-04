@@ -47,6 +47,15 @@ class _NewCommuteAssumptionState extends State<NewCommuteAssumption> {
     final assumpCount = TextEditingController();
     final assumpValue = TextEditingController();
 
+    var cardShape = RoundedRectangleBorder(
+      side: BorderSide(
+        color: Colors.grey.shade300,
+        width: 2,
+        style: BorderStyle.solid,
+      ),
+      borderRadius: BorderRadius.all(Radius.circular(12)),
+    );
+
     return Scaffold(
       appBar: AppBar(
         title: Text('New Assumption'),
@@ -72,139 +81,146 @@ class _NewCommuteAssumptionState extends State<NewCommuteAssumption> {
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(18),
-        child: Column(
-          spacing: 15,
-          // mainAxisSize: MainAxisSize.max,
-          // mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              mainAxisAlignment: MainAxisAlignment.start,
-              spacing: 4,
+        child: Card(
+          shape: cardShape,
+          color: Colors.white,
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+            child: Column(
+              spacing: 15,
               children: [
-                Text('Transport Assumption', style: textTheme.titleMedium),
-                Text(
-                  'How do you travel the distance.',
-                  style: textTheme.bodyMedium,
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  spacing: 4,
+                  children: [
+                    Text('Transport Assumption', style: textTheme.titleMedium),
+                    Text(
+                      'How do you travel the distance.',
+                      style: textTheme.bodyMedium,
+                    ),
+                  ],
                 ),
-              ],
-            ),
-            SizedBox(),
-            // The What?
-            DropdownMenu(
-              controller: assumpCategory,
-              label: Text('Transport Category'),
-              initialSelection: transporationList.first,
-              onSelected: (String? value) {},
-              dropdownMenuEntries: menuEntries,
-              expandedInsets: EdgeInsets.zero,
-              inputDecorationTheme: InputDecorationTheme(
-                border: OutlineInputBorder(),
-                fillColor: Colors.white,
-                filled: true,
-              ),
-            ),
-            // How much?
-            TextField(
-              controller: assumpValue,
-              keyboardType: TextInputType.numberWithOptions(decimal: true),
-              inputFormatters: [
-                FilteringTextInputFormatter.allow(
-                  RegExp(r'[0-9]+[,.]{0,1}[0-9]*'),
-                ),
-                TextInputFormatter.withFunction(
-                  (oldValue, newValue) => newValue.copyWith(
-                    text: newValue.text.replaceAll(',', '').replaceAll('.', ''),
+                SizedBox(),
+                // The What?
+                DropdownMenu(
+                  controller: assumpCategory,
+                  label: Text('Transport Category'),
+                  initialSelection: transporationList.first,
+                  onSelected: (String? value) {},
+                  dropdownMenuEntries: menuEntries,
+                  expandedInsets: EdgeInsets.zero,
+                  inputDecorationTheme: InputDecorationTheme(
+                    border: OutlineInputBorder(),
+                    fillColor: Colors.white,
+                    filled: true,
                   ),
                 ),
-                TextInputFormatter.withFunction(
-                  (oldValue, newValue) =>
-                      newValue.copyWith(text: '${newValue.text} Km'),
-                ),
-              ],
-              decoration: InputDecoration(
-                floatingLabelBehavior: FloatingLabelBehavior.always,
-                border: OutlineInputBorder(),
-                hintText: '100Km',
-                label: Text('Distance Travelled (Km)'),
-                alignLabelWithHint: true,
-                filled: true,
-                fillColor: Colors.white,
-              ),
-            ),
-            Row(
-              spacing: 10,
-              children: [
-                // How Offten?
-                Expanded(
-                  flex: 2,
-                  child: TextField(
-                    controller: assumpCount,
-                    keyboardType: TextInputType.numberWithOptions(
-                      decimal: true,
+                // How much?
+                TextField(
+                  controller: assumpValue,
+                  keyboardType: TextInputType.numberWithOptions(decimal: true),
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(
+                      RegExp(r'[0-9]+[,.]{0,1}[0-9]*'),
                     ),
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(
-                        RegExp(r'[0-9]+[,.]{0,1}[0-9]*'),
+                    TextInputFormatter.withFunction(
+                      (oldValue, newValue) => newValue.copyWith(
+                        text: newValue.text
+                            .replaceAll(',', '')
+                            .replaceAll('.', ''),
                       ),
-                      TextInputFormatter.withFunction(
-                        (oldValue, newValue) => newValue.copyWith(
-                          text: newValue.text
-                              .replaceAll(',', '')
-                              .replaceAll('.', ''),
+                    ),
+                    TextInputFormatter.withFunction(
+                      (oldValue, newValue) =>
+                          newValue.copyWith(text: '${newValue.text} Km'),
+                    ),
+                  ],
+                  decoration: InputDecoration(
+                    floatingLabelBehavior: FloatingLabelBehavior.always,
+                    border: OutlineInputBorder(),
+                    hintText: '100Km',
+                    label: Text('Distance Travelled (Km)'),
+                    alignLabelWithHint: true,
+                    filled: true,
+                    fillColor: Colors.white,
+                  ),
+                ),
+                Row(
+                  spacing: 10,
+                  children: [
+                    // How Offten?
+                    Expanded(
+                      flex: 2,
+                      child: TextField(
+                        controller: assumpCount,
+                        keyboardType: TextInputType.numberWithOptions(
+                          decimal: true,
+                        ),
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(
+                            RegExp(r'[0-9]+[,.]{0,1}[0-9]*'),
+                          ),
+                          TextInputFormatter.withFunction(
+                            (oldValue, newValue) => newValue.copyWith(
+                              text: newValue.text
+                                  .replaceAll(',', '')
+                                  .replaceAll('.', ''),
+                            ),
+                          ),
+                        ],
+                        decoration: InputDecoration(
+                          floatingLabelBehavior: FloatingLabelBehavior.always,
+                          border: OutlineInputBorder(),
+                          hintText: '4',
+                          label: Text('Count'),
+                          alignLabelWithHint: true,
+                          filled: true,
+                          fillColor: Colors.white,
                         ),
                       ),
-                    ],
-                    decoration: InputDecoration(
-                      floatingLabelBehavior: FloatingLabelBehavior.always,
-                      border: OutlineInputBorder(),
-                      hintText: '4',
-                      label: Text('Count'),
-                      alignLabelWithHint: true,
-                      filled: true,
-                      fillColor: Colors.white,
                     ),
-                  ),
+                    Expanded(
+                      flex: 3,
+                      child: DropdownMenu(
+                        controller: assumpFrequency,
+                        label: Text('Frequency'),
+                        initialSelection: frequencyList.first,
+                        onSelected: (String? value) {},
+                        dropdownMenuEntries: frequencyEntries,
+                        expandedInsets: EdgeInsets.zero,
+                        inputDecorationTheme: InputDecorationTheme(
+                          border: OutlineInputBorder(),
+                          fillColor: Colors.white,
+                          filled: true,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                Expanded(
-                  flex: 3,
-                  child: DropdownMenu(
-                    controller: assumpFrequency,
-                    label: Text('Frequency'),
-                    initialSelection: frequencyList.first,
-                    onSelected: (String? value) {},
-                    dropdownMenuEntries: frequencyEntries,
-                    expandedInsets: EdgeInsets.zero,
-                    inputDecorationTheme: InputDecorationTheme(
-                      border: OutlineInputBorder(),
-                      fillColor: Colors.white,
-                      filled: true,
-                    ),
-                  ),
+                FilledButton(
+                  onPressed: () async {
+                    Provider.of<AssumptionsModel>(context, listen: false).add(
+                      TransportAssumption<double>(
+                        assumpLabel: assumpCategory.text.trim(),
+                        assumpValue: double.parse(
+                          assumpValue.text.trim().substring(
+                            0,
+                            assumpValue.text.length - 4,
+                          ),
+                        ),
+                        frequency: Frequency.from(assumpFrequency.text),
+                        assumCount: int.parse(assumpCount.text.trim()),
+                      ),
+                    );
+                    Navigator.of(context).pop();
+                    // debugPrint('Assum value: $assumpValue');
+                  },
+                  child: Text('Add Assumption'),
                 ),
               ],
             ),
-            FilledButton(
-              onPressed: () async {
-                Provider.of<AssumptionsModel>(context, listen: false).add(
-                  TransportAssumption<double>(
-                    assumpLabel: assumpCategory.text.trim(),
-                    assumpValue: double.parse(
-                      assumpValue.text.trim().substring(
-                        0,
-                        assumpValue.text.length - 4,
-                      ),
-                    ),
-                    frequency: Frequency.from(assumpFrequency.text),
-                    assumCount: int.parse(assumpCount.text.trim()),
-                  ),
-                );
-                Navigator.of(context).pop();
-                // debugPrint('Assum value: $assumpValue');
-              },
-              child: Text('Add Assumption'),
-            ),
-          ],
+          ),
         ),
       ),
     );
