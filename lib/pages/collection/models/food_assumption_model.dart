@@ -105,10 +105,6 @@ class FoodAssumption<T> implements Assumption<T> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        // Icon(
-                        //   Icons.keyboard_arrow_down,
-                        //   color: Colors.red.shade500,
-                        // ),
                         Text(
                           '200 Kg',
                           style: TextStyle(
