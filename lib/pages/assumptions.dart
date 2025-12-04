@@ -117,6 +117,7 @@ class AssumptionsModel extends ChangeNotifier {
 
     _hasInitialized = true;
     _isLoading = false;
+    notifyListeners();
   }
 
   Future<void> _addTransportAssumptoDB<T>(TransportAssumption<T> assump) async {

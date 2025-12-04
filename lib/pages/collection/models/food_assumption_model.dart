@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:greenly/pages/assumptions.dart';
+import 'package:vector_graphics/vector_graphics.dart';
 
 class FoodAssumption<T> implements Assumption<T> {
   final String _assumpLabel;
@@ -48,24 +50,49 @@ class FoodAssumption<T> implements Assumption<T> {
       borderRadius: BorderRadius.all(Radius.circular(12)),
     );
 
+    const Widget svgI = SvgPicture(
+      AssetBytesLoader('assets/icons/svg/beef.svg.vec'),
+      colorFilter: ColorFilter.mode(Colors.lightGreen, BlendMode.srcIn),
+    );
+
+    const Widget svgII = SvgPicture(
+      AssetBytesLoader('assets/icons/svg/poultry.svg.vec'),
+      colorFilter: ColorFilter.mode(Colors.lightGreen, BlendMode.srcIn),
+    );
+
     return Card(
       color: Colors.white,
       elevation: 0,
       shape: cardShape,
       child: Padding(
-        padding: EdgeInsets.all(12),
+        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Row(
-              spacing: 12,
+              spacing: 18,
               children: [
-                Icon(Icons.flatware_rounded),
+                SizedBox(width: 30, height: 30, child: svgI),
                 // Emissions and Date
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
-                  children: [],
+                  children: [
+                    Text('$_assumpCount times ${_assumFrequency.name}'),
+                    Row(
+                      spacing: 6,
+                      children: [
+                        Text(
+                          '$_assumpValue ${_assumpCount > 1 ? "portions" : "portion"}',
+                          style: TextStyle(fontWeight: FontWeight.w600),
+                        ),
+                        Text(
+                          'of $_assumpLabel',
+                          style: TextStyle(fontStyle: FontStyle.italic),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -74,10 +101,28 @@ class FoodAssumption<T> implements Assumption<T> {
               children: [
                 Builder(
                   builder: (context) {
-                    return Row(
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Icon(Icons.remove, color: Colors.grey.shade500),
-                        Text('N/A'),
+                        // Icon(
+                        //   Icons.keyboard_arrow_down,
+                        //   color: Colors.red.shade500,
+                        // ),
+                        Text(
+                          '200 Kg',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 18,
+                          ),
+                        ),
+                        Text(
+                          'GHG',
+                          style: TextStyle(
+                            fontStyle: FontStyle.italic,
+                            color: Colors.black38,
+                          ),
+                        ),
                       ],
                     );
                   },
