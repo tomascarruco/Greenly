@@ -54,7 +54,7 @@ class SettingsPage extends StatelessWidget {
                     _baseAssumptionsSection(context, textTheme),
 
                     // --- User profile settings
-                    SingleChildScrollView(child: const Text('Super Text')),
+                    _baseProfileSettings(context, textTheme),
                   ],
                 ),
               ),
@@ -63,6 +63,36 @@ class SettingsPage extends StatelessWidget {
         ),
       ),
       hasActionButton: false,
+    );
+  }
+
+  SingleChildScrollView _baseProfileSettings(
+    BuildContext context,
+    TextTheme textTheme,
+  ) {
+    return SingleChildScrollView(
+      padding: EdgeInsets.symmetric(horizontal: 10),
+      // --- Body
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        spacing: 6,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisAlignment: MainAxisAlignment.start,
+            spacing: 4,
+            children: [
+              Text('Profile Settings', style: textTheme.titleMedium),
+              Text(
+                'Customize how others interact with you.',
+                style: textTheme.bodyMedium,
+              ),
+            ],
+          ),
+          _spacer(h: 10),
+          // Divider(height: 2, color: Colors.grey.shade300),
+        ],
+      ),
     );
   }
 
@@ -91,9 +121,8 @@ class SettingsPage extends StatelessWidget {
               ),
             ],
           ),
-          _spacer(),
-          Divider(height: 2, color: Colors.grey.shade300),
-          _spacer(),
+          _spacer(h: 10),
+          // Divider(height: 2, color: Colors.grey.shade300),
           // --- Commute assumption header
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -252,7 +281,7 @@ class SettingsPage extends StatelessWidget {
               ),
             ],
           ),
-          Container(),
+          _spacer(h: 10),
           Column(
             mainAxisSize: MainAxisSize.max,
             children: [
