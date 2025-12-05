@@ -172,7 +172,7 @@ class _NewCommuteAssumptionState extends State<NewCommuteAssumption> {
                         decoration: InputDecoration(
                           floatingLabelBehavior: FloatingLabelBehavior.always,
                           border: OutlineInputBorder(),
-                          hintText: '4',
+                          hintText: '1',
                           label: Text('Count'),
                           alignLabelWithHint: true,
                           filled: true,
@@ -201,9 +201,9 @@ class _NewCommuteAssumptionState extends State<NewCommuteAssumption> {
                 FilledButton(
                   onPressed: () async {
                     Provider.of<AssumptionsModel>(context, listen: false).add(
-                      TransportAssumption<double>(
+                      TransportAssumption<int>(
                         assumpLabel: assumpCategory.text.trim(),
-                        assumpValue: double.parse(
+                        assumpValue: int.parse(
                           assumpValue.text.trim().substring(
                             0,
                             assumpValue.text.length - 4,
@@ -214,7 +214,6 @@ class _NewCommuteAssumptionState extends State<NewCommuteAssumption> {
                       ),
                     );
                     Navigator.of(context).pop();
-                    // debugPrint('Assum value: $assumpValue');
                   },
                   child: Text('Add Assumption'),
                 ),

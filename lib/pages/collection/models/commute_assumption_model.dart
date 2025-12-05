@@ -23,13 +23,18 @@ class TransportAssumption<T> implements Assumption<T> {
   @override
   Map<String, Object?> toMap() {
     return {
-      'transport': _assumpValue,
+      'transport': _assumpLabel,
       'distance': _assumpValue,
       'count': _assumpCount,
       'frequency': _assumFrequency.name,
-      'ghg': _assumpGhgEmissions,
+      // 'ghg': _assumpGhgEmissions,
       // 'inserted_at': DateTime.now().toUtc(),
     };
+  }
+
+  @override
+  double ghgValue() {
+    return _assumpGhgEmissions;
   }
 
   @override
@@ -173,11 +178,5 @@ class TransportAssumption<T> implements Assumption<T> {
         'Failed to parse TransportAssumption from data (DB).',
       ),
     };
-  }
-
-  @override
-  double ghgValue() {
-    // TODO: implement ghgValue
-    throw UnimplementedError();
   }
 }
