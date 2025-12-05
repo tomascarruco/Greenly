@@ -204,10 +204,7 @@ class _NewCommuteAssumptionState extends State<NewCommuteAssumption> {
                       TransportAssumption<int>(
                         assumpLabel: assumpCategory.text.trim(),
                         assumpValue: int.parse(
-                          assumpValue.text.trim().substring(
-                            0,
-                            assumpValue.text.length - 4,
-                          ),
+                          assumpValue.text.trim().replaceAll(' Km', ''),
                         ),
                         frequency: Frequency.from(assumpFrequency.text),
                         assumCount: int.parse(assumpCount.text.trim()),

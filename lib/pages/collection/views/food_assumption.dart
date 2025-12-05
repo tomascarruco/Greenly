@@ -8,9 +8,9 @@ import 'package:provider/provider.dart';
 typedef MenuEntry = DropdownMenuEntry<String>;
 
 final List<String> foodCategorieList = <String>[
-  'Beef',
-  'Poultry',
-  'Pork',
+  'Beef Meat',
+  'Poultry Meat',
+  'Pork Meat',
   'Milk/Dary',
   'Fish',
   'Eggs',

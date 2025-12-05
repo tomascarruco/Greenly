@@ -122,7 +122,7 @@ class SettingsPage extends StatelessWidget {
             ],
           ),
           _spacer(h: 10),
-          // Divider(height: 2, color: Colors.grey.shade300),
+
           // --- Commute assumption header
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

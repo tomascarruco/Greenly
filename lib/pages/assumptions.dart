@@ -83,15 +83,15 @@ class AssumptionsModel extends ChangeNotifier {
 
   /// Add [assumption] to assumptions.
   void add(Assumption assumption) async {
+    switch (assumption) {
+      case TransportAssumption _:
+        assumption = await _addTransportAssumptoDB(assumption) as Assumption;
+      case FoodAssumption _:
+        assumption = await _addFoodAssumptoBD(assumption) as Assumption;
+    }
     _assumptions.add(assumption);
     // Notifies listeners of list changes
     notifyListeners();
-    switch (assumption) {
-      case TransportAssumption _:
-        _addTransportAssumptoDB(assumption);
-      case FoodAssumption _:
-        _addFoodAssumptoBD(assumption);
-    }
   }
 
   /// Removes all the [assumption]s from the list.
@@ -120,7 +120,9 @@ class AssumptionsModel extends ChangeNotifier {
     _isLoading = false;
   }
 
-  Future<void> _addTransportAssumptoDB<T>(TransportAssumption<T> assump) async {
+  Future<TransportAssumption<T>> _addTransportAssumptoDB<T>(
+    TransportAssumption<T> assump,
+  ) async {
     final supabase = Supabase.instance.client;
 
     final user = supabase.auth.currentUser;
@@ -128,10 +130,28 @@ class AssumptionsModel extends ChangeNotifier {
       throw const AuthException('The current user is unauthenticated');
     }
 
-    await supabase.from('transport_assumption').insert(assump.toMap());
+    print('Is expired: ${supabase.auth.currentSession?.isExpired}');
+
+    PostgrestList insertResults = await supabase
+        .from('transport_assumption')
+        .insert(assump.toMap())
+        .select('ghg_weekly');
+
+    int ghgEmission = insertResults.first['ghg_weekly'];
+
+    Map<String, Object?> assumption = assump.toMap();
+    assumption.update(
+      'ghg_weekly',
+      (m) => ghgEmission,
+      ifAbsent: () => ghgEmission,
+    );
+
+    return Future.value(TransportAssumption.fromMap(assumption));
   }
 
-  Future<void> _addFoodAssumptoBD<T>(FoodAssumption<T> assump) async {
+  Future<FoodAssumption<T>> _addFoodAssumptoBD<T>(
+    FoodAssumption<T> assump,
+  ) async {
     final supabase = Supabase.instance.client;
 
     final user = supabase.auth.currentUser;
@@ -139,7 +159,21 @@ class AssumptionsModel extends ChangeNotifier {
       throw const AuthException('The current user is unauthenticated');
     }
 
-    await supabase.from('food_assumption').insert(assump.toMap());
+    PostgrestList insertResults = await supabase
+        .from('food_assumption')
+        .insert(assump.toMap())
+        .select('ghg_weekly');
+
+    double ghgEmission = insertResults.first['ghg_weekly'];
+
+    Map<String, Object?> assumption = assump.toMap();
+    assumption.update(
+      'ghg_weekly',
+      (m) => ghgEmission,
+      ifAbsent: () => ghgEmission,
+    );
+
+    return Future.value(FoodAssumption.fromMap(assumption));
   }
 
   Future<void> _fetchExistingTransportAssumps() async {

@@ -85,7 +85,9 @@ class MainApp extends StatelessWidget {
           bodySmall: const TextStyle(fontSize: 14),
         ),
       ),
-      home: supabase.auth.currentSession != null
+      home:
+          supabase.auth.currentSession != null &&
+              !supabase.auth.currentSession!.isExpired
           ? const HomePage()
           : const AuthenticationPage(),
     );

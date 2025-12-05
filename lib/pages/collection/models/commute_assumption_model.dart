@@ -127,14 +127,12 @@ class TransportAssumption<T> implements Assumption<T> {
               children: [
                 Builder(
                   builder: (context) {
-                    return Row(
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        // Icon(
-                        //   Icons.keyboard_arrow_down,
-                        //   color: Colors.red.shade500,
-                        // ),
                         Text(
-                          '200 Kg',
+                          '$_assumpGhgEmissions Kg',
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
                             fontSize: 18,
@@ -154,13 +152,19 @@ class TransportAssumption<T> implements Assumption<T> {
   }
 
   factory TransportAssumption.fromMap(Map<String, dynamic> data) {
+    print('===== TRANSPORT DATA =====');
+    print(data);
+    data.forEach((key, value) {
+      print('$key: ${value.runtimeType} = $value');
+    });
+    print('========================');
     return switch (data) {
       {
         'transport': String transport,
         'distance': int distance,
         'count': int count,
         'frequency': String frequency,
-        'ghg': _,
+        'ghg_weekly': dynamic ghg,
         // --- Not Handled fields
         'inserted_at': _,
         'updated_at': _,
@@ -172,7 +176,7 @@ class TransportAssumption<T> implements Assumption<T> {
           assumpLabel: transport,
           assumpValue: distance as T,
           frequency: Frequency.from(frequency),
-          // ghgEmission: ghg,
+          ghgEmission: double.parse(ghg.toString()),
         ),
       _ => throw const FormatException(
         'Failed to parse TransportAssumption from data (DB).',

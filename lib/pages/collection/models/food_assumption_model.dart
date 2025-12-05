@@ -8,16 +8,24 @@ class FoodAssumption<T> implements Assumption<T> {
   final T _assumpValue;
   final Frequency _assumFrequency;
   final int _assumpCount;
+  final double _assumpGhgEmissions;
 
   const FoodAssumption({
     required int assumCount,
     required String assumpLabel,
     required T assumpValue,
     required Frequency frequency,
+    double ghgEmission = 0,
   }) : _assumpValue = assumpValue,
        _assumpLabel = assumpLabel,
        _assumFrequency = frequency,
-       _assumpCount = assumCount;
+       _assumpCount = assumCount,
+       _assumpGhgEmissions = ghgEmission;
+
+  @override
+  double ghgValue() {
+    return _assumpGhgEmissions;
+  }
 
   @override
   int count() {
@@ -44,7 +52,7 @@ class FoodAssumption<T> implements Assumption<T> {
     var cardShape = RoundedRectangleBorder(
       side: BorderSide(
         color: Colors.grey.shade300,
-        width: 2,
+        width: 1,
         style: BorderStyle.solid,
       ),
       borderRadius: BorderRadius.all(Radius.circular(12)),
@@ -106,7 +114,7 @@ class FoodAssumption<T> implements Assumption<T> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
-                          '200 Kg',
+                          '$_assumpGhgEmissions Kg',
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
                             fontSize: 18,
@@ -139,6 +147,7 @@ class FoodAssumption<T> implements Assumption<T> {
       'frequency': _assumFrequency.name,
       'proportion_size': _assumpValue,
       // 'inserted_at': DateTime.now().toUtc(),
+      // 'ghg': _assumpGhgEmissions,
     };
   }
 
@@ -148,7 +157,8 @@ class FoodAssumption<T> implements Assumption<T> {
         'categorie': String categorie,
         'count': int count,
         'frequency': String frequency,
-        'proportion_size': T proportionSize,
+        'proportion_size': String proportionSize,
+        'ghg_weekly': dynamic ghg,
         // --- Not Handled fields
         'inserted_at': _,
         'updated_at': _,
@@ -158,18 +168,13 @@ class FoodAssumption<T> implements Assumption<T> {
         FoodAssumption(
           assumCount: count,
           assumpLabel: categorie,
-          assumpValue: proportionSize,
+          assumpValue: proportionSize as T,
           frequency: Frequency.from(frequency),
+          ghgEmission: double.parse(ghg.toString()),
         ),
       _ => throw const FormatException(
-        'Failed to parse TransportAssumption from data (DB).',
+        'Failed to parse FoodAssumption from data (DB).',
       ),
     };
-  }
-
-  @override
-  double ghgValue() {
-    // TODO: implement ghgValue
-    throw UnimplementedError();
   }
 }
