@@ -5,6 +5,9 @@ import 'package:greenly/pages/collection/models/commute_assumption_model.dart';
 import 'package:greenly/pages/collection/models/food_assumption_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+List<String>? foodCategorieList;
+final List<String> proportionSizeList = <String>['Small', 'Medium', 'Large'];
+
 enum Frequency {
   daily,
   weekly,
@@ -118,6 +121,10 @@ class AssumptionsModel extends ChangeNotifier {
     _hasInitialized = true;
     notifyListeners();
     _isLoading = false;
+
+    if (foodCategorieList == null) {
+      _getFoodCategoryList();
+    }
   }
 
   Future<TransportAssumption<T>> _addTransportAssumptoDB<T>(
@@ -164,7 +171,10 @@ class AssumptionsModel extends ChangeNotifier {
         .insert(assump.toMap())
         .select('ghg_weekly');
 
-    double ghgEmission = insertResults.first['ghg_weekly'];
+    dynamic value = insertResults.first['ghg_weekly'];
+    double ghgEmission = value.runtimeType == int
+        ? (value as int).toDouble()
+        : value;
 
     Map<String, Object?> assumption = assump.toMap();
     assumption.update(
@@ -174,6 +184,18 @@ class AssumptionsModel extends ChangeNotifier {
     );
 
     return Future.value(FoodAssumption.fromMap(assumption));
+  }
+
+  Future<void> _getFoodCategoryList() async {
+    final supabase = Supabase.instance.client;
+
+    final user = supabase.auth.currentUser;
+    if (user == null) {
+      throw const AuthException('The current user is unauthenticated');
+    }
+
+    var list = await supabase.from('food_emissions').select('food');
+    foodCategorieList = list.map((elem) => elem['food'] as String).toList();
   }
 
   Future<void> _fetchExistingTransportAssumps() async {

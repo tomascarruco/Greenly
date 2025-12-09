@@ -7,18 +7,6 @@ import 'package:provider/provider.dart';
 
 typedef MenuEntry = DropdownMenuEntry<String>;
 
-final List<String> foodCategorieList = <String>[
-  'Beef Meat',
-  'Poultry Meat',
-  'Pork Meat',
-  'Milk/Dary',
-  'Fish',
-  'Eggs',
-  'Bread/grain',
-];
-
-final List<String> proportionSizeList = <String>['Small', 'Medium', 'Large'];
-
 class _NewFoodAssumptionState extends State<NewFoodAssumption> {
   double _currentSliderValue = 7;
   final _foodCategoryController = TextEditingController();
@@ -38,7 +26,7 @@ class _NewFoodAssumptionState extends State<NewFoodAssumption> {
     );
 
     final menuEntries = UnmodifiableListView<MenuEntry>(
-      foodCategorieList.map(
+      foodCategorieList!.map(
         (String name) => MenuEntry(
           value: name,
           label: name[0].toUpperCase() + name.substring(1),
@@ -142,7 +130,7 @@ class _NewFoodAssumptionState extends State<NewFoodAssumption> {
                           child: DropdownMenu(
                             controller: _foodCategoryController,
                             label: Text('Food Category'),
-                            initialSelection: foodCategorieList.first,
+                            initialSelection: foodCategorieList!.first,
                             onSelected: (String? value) {},
                             dropdownMenuEntries: menuEntries,
                             expandedInsets: EdgeInsets.zero,
@@ -175,7 +163,7 @@ class _NewFoodAssumptionState extends State<NewFoodAssumption> {
                   FoodAssumption<String>(
                     assumCount: _currentSliderValue.toInt(),
                     assumpLabel: _foodCategoryController.text,
-                    assumpValue: _proportionSizeController.text,
+                    assumpValue: "Medium",
                     frequency: Frequency.weekly,
                   ),
                 );

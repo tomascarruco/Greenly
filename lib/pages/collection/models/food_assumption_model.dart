@@ -114,7 +114,7 @@ class FoodAssumption<T> implements Assumption<T> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
-                          '$_assumpGhgEmissions Kg',
+                          '${_assumpGhgEmissions.toStringAsFixed(2)} Kg',
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
                             fontSize: 18,
@@ -159,11 +159,6 @@ class FoodAssumption<T> implements Assumption<T> {
         'frequency': String frequency,
         'proportion_size': String proportionSize,
         'ghg_weekly': dynamic ghg,
-        // --- Not Handled fields
-        'inserted_at': _,
-        'updated_at': _,
-        'usr': _,
-        'id': _,
       } =>
         FoodAssumption(
           assumCount: count,

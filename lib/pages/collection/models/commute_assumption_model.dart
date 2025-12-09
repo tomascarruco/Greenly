@@ -152,12 +152,6 @@ class TransportAssumption<T> implements Assumption<T> {
   }
 
   factory TransportAssumption.fromMap(Map<String, dynamic> data) {
-    print('===== TRANSPORT DATA =====');
-    print(data);
-    data.forEach((key, value) {
-      print('$key: ${value.runtimeType} = $value');
-    });
-    print('========================');
     return switch (data) {
       {
         'transport': String transport,
