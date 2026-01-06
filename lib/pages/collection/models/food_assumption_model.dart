@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:greenly/pages/assumptions.dart';
-import 'package:vector_graphics/vector_graphics.dart';
 
 class FoodAssumption<T> implements Assumption<T> {
   final String _assumpLabel;
@@ -58,29 +56,23 @@ class FoodAssumption<T> implements Assumption<T> {
       borderRadius: BorderRadius.all(Radius.circular(12)),
     );
 
-    const Widget svgI = SvgPicture(
-      AssetBytesLoader('assets/icons/svg/beef.svg.vec'),
-      colorFilter: ColorFilter.mode(Colors.lightGreen, BlendMode.srcIn),
-    );
-
-    const Widget svgII = SvgPicture(
-      AssetBytesLoader('assets/icons/svg/poultry.svg.vec'),
-      colorFilter: ColorFilter.mode(Colors.lightGreen, BlendMode.srcIn),
-    );
+    // const Widget svgI = SvgPicture(
+    //   AssetBytesLoader('assets/icons/svg/beef.svg.vec'),
+    //   colorFilter: ColorFilter.mode(Colors.lightGreen, BlendMode.srcIn),
+    // );
 
     return Card(
       color: Colors.white,
       elevation: 0,
       shape: cardShape,
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Row(
               spacing: 18,
               children: [
-                SizedBox(width: 30, height: 30, child: svgI),
                 // Emissions and Date
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -91,12 +83,15 @@ class FoodAssumption<T> implements Assumption<T> {
                       spacing: 6,
                       children: [
                         Text(
-                          '$_assumpValue ${_assumpCount > 1 ? "portions" : "portion"}',
-                          style: TextStyle(fontWeight: FontWeight.w600),
+                          '$_assumpValue ${_assumpCount > 1 ? "portions" : "portion"} of',
+                          style: TextStyle(fontWeight: FontWeight.w500),
                         ),
                         Text(
-                          'of $_assumpLabel',
-                          style: TextStyle(fontStyle: FontStyle.italic),
+                          '$_assumpLabel',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w800,
+                            color: Colors.green,
+                          ),
                         ),
                       ],
                     ),
@@ -121,7 +116,7 @@ class FoodAssumption<T> implements Assumption<T> {
                           ),
                         ),
                         Text(
-                          'GHG',
+                          'Co2e',
                           style: TextStyle(
                             fontStyle: FontStyle.italic,
                             color: Colors.black38,
@@ -140,12 +135,12 @@ class FoodAssumption<T> implements Assumption<T> {
   }
 
   @override
-  Map<String, Object?> toMap() {
+  Map<String, Object> toMap() {
     return {
       'categorie': _assumpLabel,
       'count': _assumpCount,
       'frequency': _assumFrequency.name,
-      'proportion_size': _assumpValue,
+      'proportion_size': _assumpValue as Object,
       // 'inserted_at': DateTime.now().toUtc(),
       // 'ghg': _assumpGhgEmissions,
     };

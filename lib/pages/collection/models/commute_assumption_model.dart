@@ -21,10 +21,10 @@ class TransportAssumption<T> implements Assumption<T> {
        _assumpGhgEmissions = ghgEmission;
 
   @override
-  Map<String, Object?> toMap() {
+  Map<String, Object> toMap() {
     return {
       'transport': _assumpLabel,
-      'distance': _assumpValue,
+      'distance': _assumpValue as Object,
       'count': _assumpCount,
       'frequency': _assumFrequency.name,
       // 'ghg': _assumpGhgEmissions,
@@ -68,37 +68,36 @@ class TransportAssumption<T> implements Assumption<T> {
       borderRadius: BorderRadius.all(Radius.circular(12)),
     );
 
-    final IconData transportIcon;
-    switch (_assumpLabel) {
-      case 'Sedan':
-        transportIcon = Icons.directions_car_rounded;
-      case 'SUV':
-        transportIcon = Icons.airport_shuttle_rounded;
-      case 'Electric Sedan':
-        transportIcon = Icons.electric_car_rounded;
-      case 'Bus':
-        transportIcon = Icons.directions_bus_rounded;
-      case 'Subway':
-        transportIcon = Icons.directions_subway_rounded;
-      case 'Train':
-        transportIcon = Icons.directions_railway_rounded;
-      default:
-        transportIcon = Icons.directions_car_rounded;
-    }
+    // final IconData transportIcon;
+    // switch (_assumpLabel) {
+    //   case 'Sedan':
+    //     transportIcon = Icons.directions_car_rounded;
+    //   case 'SUV':
+    //     transportIcon = Icons.airport_shuttle_rounded;
+    //   case 'Electric Sedan':
+    //     transportIcon = Icons.electric_car_rounded;
+    //   case 'Bus':
+    //     transportIcon = Icons.directions_bus_rounded;
+    //   case 'Subway':
+    //     transportIcon = Icons.directions_subway_rounded;
+    //   case 'Train':
+    //     transportIcon = Icons.directions_railway_rounded;
+    //   default:
+    //     transportIcon = Icons.directions_car_rounded;
+    // }
 
     return Card(
       color: Colors.white,
       elevation: 0,
       shape: cardShape,
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        padding: EdgeInsets.symmetric(horizontal: 28, vertical: 16),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Row(
               spacing: 18,
               children: [
-                Icon(transportIcon, size: 30, color: Colors.lightGreen),
                 // Emissions and Date
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -113,8 +112,15 @@ class TransportAssumption<T> implements Assumption<T> {
                           style: TextStyle(fontWeight: FontWeight.w600),
                         ),
                         Text(
-                          'per travel',
+                          'per travel in a',
                           style: TextStyle(fontStyle: FontStyle.italic),
+                        ),
+                        Text(
+                          '$_assumpLabel',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w800,
+                            color: Colors.green,
+                          ),
                         ),
                       ],
                     ),
@@ -132,13 +138,19 @@ class TransportAssumption<T> implements Assumption<T> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
-                          '$_assumpGhgEmissions Kg',
+                          '${_assumpGhgEmissions.toStringAsFixed(2)} Kg',
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
                             fontSize: 18,
                           ),
                         ),
-                        Text(' of GHG'),
+                        Text(
+                          'Co2e',
+                          style: TextStyle(
+                            fontStyle: FontStyle.italic,
+                            color: Colors.black38,
+                          ),
+                        ),
                       ],
                     );
                   },
@@ -160,10 +172,10 @@ class TransportAssumption<T> implements Assumption<T> {
         'frequency': String frequency,
         'ghg_weekly': dynamic ghg,
         // --- Not Handled fields
-        'inserted_at': _,
-        'updated_at': _,
-        'usr': _,
-        'id': _,
+        // 'inserted_at': _,
+        // 'updated_at': _,
+        // 'usr': _,
+        // 'id': _,
       } =>
         TransportAssumption(
           assumCount: count,

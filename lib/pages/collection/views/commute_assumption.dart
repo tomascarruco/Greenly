@@ -8,22 +8,13 @@ import 'package:provider/provider.dart';
 
 typedef MenuEntry = DropdownMenuEntry<String>;
 
-final List<String> transporationList = <String>[
-  'Car',
-  'Electric Car',
-  'SUV',
-  'Bus',
-  'Subway',
-  'Train',
-];
-
 class _NewCommuteAssumptionState extends State<NewCommuteAssumption> {
   @override
   Widget build(BuildContext context) {
     var textTheme = TextTheme.of(context);
 
     final menuEntries = UnmodifiableListView<MenuEntry>(
-      transporationList.map(
+      transporationList!.map(
         (String name) => MenuEntry(value: name, label: name),
       ),
     );
@@ -106,7 +97,7 @@ class _NewCommuteAssumptionState extends State<NewCommuteAssumption> {
                 DropdownMenu(
                   controller: assumpCategory,
                   label: Text('Transport Category'),
-                  initialSelection: transporationList.first,
+                  initialSelection: transporationList!.first,
                   onSelected: (String? value) {},
                   dropdownMenuEntries: menuEntries,
                   expandedInsets: EdgeInsets.zero,
