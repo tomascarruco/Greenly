@@ -121,6 +121,7 @@ class SettingsPage extends StatelessWidget {
               ),
             ],
           ),
+
           _spacer(h: 10),
 
           // --- Commute assumption header
@@ -129,21 +130,40 @@ class SettingsPage extends StatelessWidget {
             spacing: 4,
             children: [
               Text('Commute', style: textTheme.titleSmall),
-              // --- Add new Assumption -> redirects to data collection page.
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => NewCommuteAssumption(),
+              Row(
+                spacing: 12,
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      Provider.of<AssumptionsModel>(
+                        context,
+                        listen: false,
+                      ).refreshAssumptionByType<TransportAssumption>();
+                    },
+                    style: TextButton.styleFrom(
+                      backgroundColor: Colors.grey.shade200,
+                      padding: EdgeInsets.symmetric(horizontal: 12),
+                      foregroundColor: Colors.blueGrey,
                     ),
-                  );
-                },
-                style: TextButton.styleFrom(
-                  backgroundColor: Colors.grey.shade200,
-                  padding: EdgeInsets.symmetric(horizontal: 12),
-                  foregroundColor: Colors.blueGrey,
-                ),
-                child: Text('New Entrie'),
+                    icon: Icon(Icons.refresh_rounded),
+                  ),
+                  // --- Add new Assumption -> redirects to data collection page.
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => NewCommuteAssumption(),
+                        ),
+                      );
+                    },
+                    style: TextButton.styleFrom(
+                      backgroundColor: Colors.grey.shade300,
+                      padding: EdgeInsets.symmetric(horizontal: 12),
+                      foregroundColor: Colors.blueGrey,
+                    ),
+                    child: Text('New Entrie'),
+                  ),
+                ],
               ),
             ],
           ),
@@ -157,6 +177,16 @@ class SettingsPage extends StatelessWidget {
                   AssumptionsModel assumptions,
                   Widget? child,
                 ) {
+                  var buttonBg = WidgetStateProperty.resolveWith<Color?>((
+                    Set<WidgetState> states,
+                  ) {
+                    if (states.contains(WidgetState.pressed)) {
+                      return Colors.red.shade300;
+                    } else {
+                      return Colors.red.shade400;
+                    }
+                  });
+
                   var children = assumptions
                       .getAssumptionsPerType<TransportAssumption>();
 
@@ -164,9 +194,27 @@ class SettingsPage extends StatelessWidget {
                     children.length,
                     (int index) {
                       final child = children[index];
-                      return child.toWidget();
+                      return Row(
+                        spacing: 10,
+                        children: [
+                          Expanded(child: child.toWidget()),
+                          IconButton.filled(
+                            onPressed: () async {
+                              await assumptions.removeAssumption(child);
+                            },
+                            icon: Icon(Icons.delete_rounded),
+                            style: ButtonStyle(backgroundColor: buttonBg),
+                          ),
+                        ],
+                      );
                     },
                   );
+
+                  var text = "No entries here";
+
+                  if (assumptions.loading) {
+                    text = "Loading...";
+                  }
 
                   return Column(
                     mainAxisSize: MainAxisSize.max,
@@ -176,7 +224,7 @@ class SettingsPage extends StatelessWidget {
                           ? Column(
                               children: [
                                 Text(
-                                  'No entries here!',
+                                  text,
                                   style: TextStyle(
                                     color: Colors.grey.shade500,
                                     fontStyle: FontStyle.italic,
@@ -198,21 +246,40 @@ class SettingsPage extends StatelessWidget {
             spacing: 4,
             children: [
               Text('Food', style: textTheme.titleSmall),
-              // --- Add new Assumption -> redirects to data collection page.
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => NewFoodAssumption(),
+              Row(
+                spacing: 12,
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      Provider.of<AssumptionsModel>(
+                        context,
+                        listen: false,
+                      ).refreshAssumptionByType<FoodAssumption>();
+                    },
+                    style: TextButton.styleFrom(
+                      backgroundColor: Colors.grey.shade200,
+                      padding: EdgeInsets.symmetric(horizontal: 12),
+                      foregroundColor: Colors.blueGrey,
                     ),
-                  );
-                },
-                style: TextButton.styleFrom(
-                  backgroundColor: Colors.grey.shade200,
-                  padding: EdgeInsets.symmetric(horizontal: 12),
-                  foregroundColor: Colors.blueGrey,
-                ),
-                child: Text('New Entrie'),
+                    icon: Icon(Icons.refresh_rounded),
+                  ),
+                  // --- Add new Assumption -> redirects to data collection page.
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => NewFoodAssumption(),
+                        ),
+                      );
+                    },
+                    style: TextButton.styleFrom(
+                      backgroundColor: Colors.grey.shade300,
+                      padding: EdgeInsets.symmetric(horizontal: 12),
+                      foregroundColor: Colors.blueGrey,
+                    ),
+                    child: Text('New Entrie'),
+                  ),
+                ],
               ),
             ],
           ),
@@ -226,6 +293,16 @@ class SettingsPage extends StatelessWidget {
                   AssumptionsModel assumptions,
                   Widget? child,
                 ) {
+                  var buttonBg = WidgetStateProperty.resolveWith<Color?>((
+                    Set<WidgetState> states,
+                  ) {
+                    if (states.contains(WidgetState.pressed)) {
+                      return Colors.red.shade300;
+                    } else {
+                      return Colors.red.shade400;
+                    }
+                  });
+
                   var children = assumptions
                       .getAssumptionsPerType<FoodAssumption>();
 
@@ -233,8 +310,24 @@ class SettingsPage extends StatelessWidget {
                     int index,
                   ) {
                     var child = children[index];
-                    return child.toWidget();
+                    return Row(
+                      spacing: 4,
+                      children: [
+                        Expanded(child: child.toWidget()),
+                        IconButton.filled(
+                          onPressed: () async {
+                            await assumptions.removeAssumption(child);
+                          },
+                          icon: Icon(Icons.delete_rounded),
+                          style: ButtonStyle(backgroundColor: buttonBg),
+                        ),
+                      ],
+                    );
                   });
+
+                  var text = assumptions.loading
+                      ? "Loading..."
+                      : "No entries here";
 
                   return Column(
                     mainAxisSize: MainAxisSize.max,
@@ -244,7 +337,7 @@ class SettingsPage extends StatelessWidget {
                           ? Column(
                               children: [
                                 Text(
-                                  'No entries here!',
+                                  text,
                                   style: TextStyle(
                                     color: Colors.grey.shade500,
                                     fontStyle: FontStyle.italic,

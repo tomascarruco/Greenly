@@ -6,6 +6,8 @@ import 'package:greenly/pages/collection/models/food_assumption_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 List<String>? foodCategorieList;
+List<String>? transporationList;
+
 final List<String> proportionSizeList = <String>['Small', 'Medium', 'Large'];
 
 enum Frequency {
@@ -59,7 +61,7 @@ abstract class Assumption<T> {
   Frequency frequency();
   int count();
   Widget toWidget();
-  Map<String, Object?> toMap();
+  Map<String, Object> toMap();
   double ghgValue();
 }
 
@@ -84,7 +86,7 @@ class AssumptionsModel extends ChangeNotifier {
   UnmodifiableListView<T> getAssumptionsPerType<T extends Assumption>() =>
       UnmodifiableListView(_assumptions.whereType<T>());
 
-  /// Add [assumption] to assumptions.
+  /// Add an Assumption to assumptions.
   void add(Assumption assumption) async {
     switch (assumption) {
       case TransportAssumption _:
@@ -101,6 +103,59 @@ class AssumptionsModel extends ChangeNotifier {
   void removeAll() {
     _assumptions.clear();
     // Notifies listeners of list changes
+    notifyListeners();
+  }
+
+  Future<void> removeAssumption(Assumption assump_in) async {
+    final supabase = Supabase.instance.client;
+
+    final user = supabase.auth.currentUser;
+    if (user == null) {
+      throw const AuthException('The current user is unauthenticated');
+    }
+
+    String assump_db_table = "";
+
+    switch (assump_in.runtimeType) {
+      case FoodAssumption:
+        assump_db_table = 'food_assumption';
+        break;
+      case TransportAssumption:
+        assump_db_table = 'transport_assumption';
+        break;
+    }
+
+    // Assertion check for all possible table names
+    if (assump_db_table == "") {
+      debugPrint(
+        "Assumption did not match to any know table names, assump_typ: ${assump_in.runtimeType}",
+      );
+      debugPrintStack();
+      return;
+    }
+
+    await supabase
+        .from(assump_db_table)
+        .delete()
+        .eq('categorie', assump_in.label());
+
+    _assumptions.removeWhere((assump) => assump.label() == assump_in.label());
+    notifyListeners();
+  }
+
+  Future<void> refreshAssumptionByType<T extends Assumption>() async {
+    _assumptions.removeWhere((assump) => assump is T);
+    // _isLoading = true;
+    notifyListeners();
+
+    switch (T) {
+      case TransportAssumption:
+        await _fetchExistingTransportAssumps();
+      case FoodAssumption:
+        await _fetchExistingFoodAssumps();
+    }
+
+    // _isLoading = false;
     notifyListeners();
   }
 
@@ -125,6 +180,9 @@ class AssumptionsModel extends ChangeNotifier {
     if (foodCategorieList == null) {
       _getFoodCategoryList();
     }
+    if (transporationList == null) {
+      _getTransportationList();
+    }
   }
 
   Future<TransportAssumption<T>> _addTransportAssumptoDB<T>(
@@ -137,14 +195,15 @@ class AssumptionsModel extends ChangeNotifier {
       throw const AuthException('The current user is unauthenticated');
     }
 
-    print('Is expired: ${supabase.auth.currentSession?.isExpired}');
-
     PostgrestList insertResults = await supabase
         .from('transport_assumption')
         .insert(assump.toMap())
         .select('ghg_weekly');
 
-    int ghgEmission = insertResults.first['ghg_weekly'];
+    dynamic value = insertResults.first['ghg_weekly'];
+    double ghgEmission = value.runtimeType == int
+        ? (value as int).toDouble()
+        : value;
 
     Map<String, Object?> assumption = assump.toMap();
     assumption.update(
@@ -184,6 +243,20 @@ class AssumptionsModel extends ChangeNotifier {
     );
 
     return Future.value(FoodAssumption.fromMap(assumption));
+  }
+
+  Future<void> _getTransportationList() async {
+    final supabase = Supabase.instance.client;
+
+    final user = supabase.auth.currentUser;
+    if (user == null) {
+      throw const AuthException('The current user is unauthenticated');
+    }
+
+    var list = await supabase.from('transport_emissions').select('transport');
+    transporationList = list
+        .map((elem) => elem['transport'] as String)
+        .toList();
   }
 
   Future<void> _getFoodCategoryList() async {
